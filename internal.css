@@ -30,7 +30,7 @@ html, body {
   right: auto !important;
   bottom: auto !important;
   display: grid !important;
-  grid-template-columns: 1fr 270px !important;
+  grid-template-columns: 1fr var(--sb-width, 40vw) !important;
   width: 100% !important;
   width: 100dvw !important;
   height: auto !important;
@@ -150,38 +150,101 @@ header .mob-menu-btn {
 }
 .ph { display: block; }
 
-/* Keep labels and values from running together in the narrow landscape panel. */
-.sb .lch { gap: 8px; align-items: flex-start; }
-.sb .lcid { min-width: 0; flex: 1 1 auto; font-size: 1.05rem; overflow-wrap: break-word; line-height: 1.25; }
-.sb .lctype { flex: 0 0 auto; }
-.sb .lcrow { gap: 10px; align-items: flex-start; }
-.sb .lck { flex: 0 1 auto; padding-right: 4px; }
-.sb .lcv, .sb .lcbadge { flex: 1 1 auto; text-align: right; min-width: 0; font-size: 0.95rem; overflow-wrap: break-word; word-break: normal; }
+/* One piece of info per line. Panel grows with the viewport; type shrinks to fit. */
+.sb {
+  --sb-font: 0.82rem;
+  font-size: var(--sb-font);
+}
+.sb .lch,
+.sb .lcrow,
+.sb .lck,
+.sb .lcv:not(.internal-notes),
+.sb .lctype,
+.sb .lcid,
+.sb .lcbadge,
+.sb .share-label {
+  white-space: nowrap !important;
+}
+.sb .lch,
+.sb .lcrow {
+  gap: 8px;
+  align-items: center !important;
+  flex-wrap: nowrap !important;
+}
+.sb .lcid {
+  min-width: 0;
+  flex: 1 1 auto;
+  font-size: 1.05em;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sb .lctype { flex: 0 0 auto; font-size: 0.72em; }
+.sb .lcrow { padding-top: 5px !important; padding-bottom: 5px !important; }
+.sb .lck { flex: 0 0 auto; padding-right: 6px; font-size: 0.78em; }
+.sb .lcv:not(.internal-notes) {
+  flex: 1 1 auto;
+  text-align: right;
+  min-width: 0;
+  overflow: hidden;
+  font-size: 0.95em;
+}
+.sb .internal-notes {
+  white-space: pre-wrap !important;
+  overflow-wrap: anywhere;
+  text-align: left;
+  max-height: 7.5em;
+  overflow-y: auto;
+  display: block;
+  width: 100%;
+  font-size: 0.9em;
+  line-height: 1.35;
+  -webkit-user-select: text;
+  user-select: text;
+}
+.sb .lcrow:has(.internal-notes) {
+  flex-wrap: wrap !important;
+  white-space: normal !important;
+  align-items: flex-start !important;
+}
+.sb .lcrow:has(.internal-notes) .lck { width: 100%; }
 
+.btn-view-buyer {
+  display: block;
+  width: 100%;
+  margin: 10px 0 8px;
+  padding: 8px 10px;
+  background: #C8A96E;
+  color: #0A0A0A;
+  border: none;
+  border-radius: 4px;
+  font-family: var(--sans), Montserrat, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.btn-view-buyer[hidden] { display: none !important; }
+.btn-view-buyer:active { filter: brightness(0.92); }
 
-
-/* Currency and language pills stay compact in the header. */
-.cur-toggle { margin: 0 !important; align-self: center !important; }
-.lang-toggle { margin: 0 !important; }
-
-button, .cur-btn, .zbtn { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
-input, select, textarea { font-size: 16px; }
-
-/* Zoom controls sit on the map, clear of the right-hand lot panel. */
-.zbtns {
-  right: 12px !important;
-  bottom: 12px !important;
-  z-index: 150;
+.private-info.is-blurred {
+  filter: blur(10px);
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  pointer-events: none;
+  max-height: 8.2rem;
+  overflow: hidden;
+}
+.private-info.is-blurred .internal-notes {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  max-height: 3.5em;
+  overflow: hidden;
 }
 
-/* Bottom sheet is unused in this app; lot details live in the right-hand panel. */
-.mob-sheet, #mob-sheet, .mob-stats { display: none !important; }
-.tt { display: none !important; }
-
 /* Status still appears as text / a badge in the detail card, not as map colours. */
-.internal-rows { margin-top: 6px; }
-.internal-rows .lcrow { align-items: flex-start; }
-.internal-notes { white-space: pre-wrap; font-size: 0.78rem; line-height: 1.45; max-height: 8.5rem; overflow: auto; color: rgba(255,255,255,0.88); touch-action: pan-y; }
 .share-block { margin: 8px 0 0; padding: 8px 0 0; border-top: 1px solid rgba(255,255,255,0.08); }
 .share-label { font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-bottom: 4px; }
 .lcbadge.is-available { background: rgba(45,106,79,0.25); color: #4CAF7A; border: 1px solid rgba(45,106,79,0.4); }

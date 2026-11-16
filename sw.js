@@ -2,7 +2,7 @@
 //  - app shell (html/js/css/json): network-first with cache: 'no-cache' and a 3.5s timeout
 //  - icons and the map image: cache-first
 //  - new versions activate immediately (skipWaiting + clients.claim); the page reloads once on controllerchange
-const CACHE = 'ta-internal-v4';
+const CACHE = 'ta-internal-v5';
 const ASSETS = [
   './',
   'index.html',

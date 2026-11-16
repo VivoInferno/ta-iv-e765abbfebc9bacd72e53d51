@@ -39,7 +39,8 @@
       statMp: 'Paying',
       title: 'Tres Aguas Internal Plan',
       noDetail: 'Tap a lot to see details',
-      rotate: 'Rotate your phone'
+      rotate: 'Rotate your phone',
+      viewBuyer: 'View Buyer Info'
     },
     es: {
       pending: 'Pendiente',
@@ -59,7 +60,8 @@
       statMp: 'En pago',
       title: 'Plan interno Tres Aguas',
       noDetail: 'Toca un lote para ver detalles',
-      rotate: 'Gira el telefono'
+      rotate: 'Gira el telefono',
+      viewBuyer: 'Ver info del comprador'
     }
   };
 
@@ -440,6 +442,97 @@
     TTel.classList.add('on');
   };
 
+
+  let lastPrivacyLot = null;
+  let buyerUnlocked = false;
+
+  function isPrivateStatus(status) {
+    return !!(status && status !== 'available');
+  }
+
+  function applyBuyerPrivacy(data) {
+    const lotKey = (typeof selId !== 'undefined') ? selId : null;
+    if (lotKey !== lastPrivacyLot) {
+      buyerUnlocked = false;
+      lastPrivacyLot = lotKey;
+    }
+    const privateLot = isPrivateStatus(data && data.status);
+    const box = document.getElementById('c-internal');
+    const btn = document.getElementById('btn-view-buyer');
+    const blur = privateLot && !buyerUnlocked;
+    if (box) {
+      box.classList.toggle('is-blurred', blur);
+      box.setAttribute('aria-hidden', blur ? 'true' : 'false');
+    }
+    if (btn) {
+      btn.hidden = !(privateLot && !buyerUnlocked);
+      btn.setAttribute('aria-expanded', (!blur && privateLot) ? 'true' : 'false');
+      btn.textContent = ti('viewBuyer');
+    }
+    // Sold-style list/sale prices in the top card are private; hide them so they are not shown unblurred.
+    const hideTopPrice = privateLot && data.status !== 'pending';
+    ['c-pm', 'c-tot'].forEach(function (id) {
+      const el = document.getElementById(id);
+      if (el && el.parentElement) el.parentElement.style.display = hideTopPrice ? 'none' : '';
+    });
+  }
+
+  function revealBuyerInfo() {
+    buyerUnlocked = true;
+    const box = document.getElementById('c-internal');
+    const btn = document.getElementById('btn-view-buyer');
+    if (box) {
+      box.classList.remove('is-blurred');
+      box.setAttribute('aria-hidden', 'false');
+    }
+    if (btn) {
+      btn.hidden = true;
+      btn.setAttribute('aria-expanded', 'true');
+    }
+    if (typeof fitLotPanel === 'function') fitLotPanel();
+  }
+
+  function fitLotPanel() {
+    const sb = document.querySelector('.sb');
+    const root = document.documentElement;
+    if (!sb) return;
+    const vw = window.innerWidth;
+    const minMap = Math.max(340, Math.round(vw * 0.50));
+    const maxSb = Math.max(280, vw - minMap);
+    let size = 0.86;
+    const rowsOf = function () {
+      return sb.querySelectorAll('.lch, .lcrow');
+    };
+    const apply = function () {
+      root.style.setProperty('--sb-font', size + 'rem');
+      root.style.setProperty('--sb-width', maxSb + 'px');
+    };
+    apply();
+    const longest = function () {
+      let m = 0;
+      rowsOf().forEach(function (row) {
+        if (row.querySelector('.internal-notes')) return;
+        m = Math.max(m, row.scrollWidth);
+      });
+      return m;
+    };
+    const pad = 32;
+    let need = longest() + pad;
+    let guard = 0;
+    while (need > maxSb && size > 0.60 && guard < 20) {
+      size -= 0.025;
+      apply();
+      need = longest() + pad;
+      guard += 1;
+    }
+    const finalW = Math.min(maxSb, Math.max(Math.round(need), Math.round(vw * 0.34)));
+    root.style.setProperty('--sb-width', finalW + 'px');
+    if (typeof window.fitMap === 'function') window.fitMap();
+  }
+
+  window.revealBuyerInfo = revealBuyerInfo;
+  window.fitLotPanel = fitLotPanel;
+
   window.selectShape = function selectShape(shape) {
     selId = shape.id;
     const data = lotData[shape.id];
@@ -479,10 +572,12 @@
       styleBadge(document.getElementById('c-badge'), data.status);
     }
     fillInternal('c-', data);
+    applyBuyerPrivacy(data);
     const acts = document.getElementById('c-acts');
     if (acts) acts.style.display = 'none';
     if (typeof mobSelectShape === 'function') mobSelectShape(shape);
     render();
+    fitLotPanel();
   };
 
   const origMob = window.mobSelectShape;
@@ -541,6 +636,8 @@
     document.documentElement.lang = curLang === 'es' ? 'es' : 'en';
     const rotateMsg = document.getElementById('rotate-msg');
     if (rotateMsg) rotateMsg.textContent = ti('rotate');
+    const vbtn = document.getElementById('btn-view-buyer');
+    if (vbtn) vbtn.textContent = ti('viewBuyer');
     const title = document.querySelector('title');
     if (title) title.textContent = ti('title');
     if (selId) {
@@ -590,6 +687,12 @@
 
   document.documentElement.style.setProperty('--sheet-peek', '72px');
   installOrientationLock();
+  document.addEventListener('click', function (e) {
+    const btn = e.target && e.target.closest && e.target.closest('#btn-view-buyer');
+    if (btn) { e.preventDefault(); revealBuyerInfo(); }
+  });
+  window.addEventListener('resize', function () { fitLotPanel(); });
+
 
   function registerSW() {
     var cfg = window.TA_INTERNAL || {};
