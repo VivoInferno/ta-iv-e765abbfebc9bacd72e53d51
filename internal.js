@@ -335,6 +335,8 @@
       const fa = isSoldStyle ? 0.0 : baseA;
       const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
       poly.setAttribute('points', ptsStr(shape.pts));
+      if (shape.lot_id) poly.setAttribute('data-lot', shape.lot_id);
+      if (shape.id) poly.setAttribute('data-id', shape.id);
       poly.setAttribute('fill', fa > 0 ? hexA(c, fa) : 'none');
       if (shape.id === selId) {
         poly.setAttribute('stroke', c);
@@ -387,7 +389,36 @@
         if (!isSel) { poly.setAttribute('fill', fa > 0 ? hexA(c, fa) : 'none'); poly.setAttribute('stroke', restStroke); }
         hideTT();
       });
-      poly.addEventListener('click', function () { hideTT(); selectShape(shape); });
+      (function (targetShape, targetPoly) {
+        var pt = null;
+        var lastPick = 0;
+        function pickLot() {
+          var now = Date.now();
+          if (now - lastPick < 350) return;
+          lastPick = now;
+          hideTT();
+          selectShape(targetShape);
+        }
+        targetPoly.addEventListener('click', function (e) {
+          if (e && e.pointerType === 'touch') return;
+          pickLot();
+        });
+        targetPoly.addEventListener('pointerdown', function (e) {
+          if (e.pointerType !== 'mouse') pt = { x: e.clientX, y: e.clientY };
+        });
+        targetPoly.addEventListener('pointerup', function (e) {
+          if (!pt) return;
+          var dx = e.clientX - pt.x, dy = e.clientY - pt.y;
+          pt = null;
+          if (dx * dx + dy * dy < 144) pickLot();
+        });
+        targetPoly.addEventListener('touchend', function (e) {
+          if (!e.changedTouches || !e.changedTouches[0]) return;
+          if (e.touches && e.touches.length) return;
+          // If this looks like the end of a one-finger tap, select.
+          // Pan/pinch handlers on the wrap still run; the movement gate is on pointerup.
+        }, { passive: true });
+      })(shape, poly);
       g.appendChild(poly);
     });
   };
@@ -527,7 +558,6 @@
     }
     const finalW = Math.min(maxSb, Math.max(Math.round(need), Math.round(vw * 0.34)));
     root.style.setProperty('--sb-width', finalW + 'px');
-    if (typeof window.fitMap === 'function') window.fitMap();
   }
 
   window.revealBuyerInfo = revealBuyerInfo;
@@ -713,31 +743,119 @@
         document.addEventListener('visibilitychange', function () {
           if (document.visibilityState === 'visible') check();
         });
-        window.addEventListener('pageshow', function (e) { if (e.persisted) check(); });
+        window.addEventListener('pageshow', function () { check(); });
       }).catch(function (err) { console.warn('SW failed', err); });
     });
+  }
+
+  const BUILD = (window.TA_INTERNAL && window.TA_INTERNAL.build) || 'v6';
+  var liveDataOk = false;
+
+  function showDataNotice(msg) {
+    const el = document.getElementById('data-notice');
+    if (!el) return;
+    if (!msg) { el.hidden = true; el.textContent = ''; return; }
+    el.hidden = false;
+    el.textContent = msg;
+  }
+
+  function formatDataDate(iso) {
+    if (!iso) return '';
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return String(iso).slice(0, 10);
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return months[d.getUTCMonth()] + ' ' + d.getUTCDate() + ', ' + d.getUTCFullYear();
+  }
+
+  async function fetchJson(url, opts) {
+    const res = await fetch(url, opts || {});
+    if (!res.ok) throw new Error('http ' + res.status);
+    return res.json();
+  }
+
+  async function loadLiveLots(cfg) {
+    if (!cfg.liveUrl) throw new Error('no live url');
+    const sep = cfg.liveUrl.indexOf('?') >= 0 ? '&' : '?';
+    const url = cfg.liveUrl + sep + 't=' + Date.now();
+    const data = await fetchJson(url, { cache: 'no-cache', mode: 'cors', credentials: 'omit' });
+    if (!data || !Array.isArray(data.lots) || !data.lots.length) {
+      const err = new Error((data && data.error) || 'live empty');
+      err.payload = data;
+      throw err;
+    }
+    return data;
+  }
+
+  async function loadBundledLots(cfg) {
+    const base = cfg.dataUrl || './lots.json';
+    const sep = base.indexOf('?') >= 0 ? '&' : '?';
+    return fetchJson(base + sep + 'v=' + encodeURIComponent(BUILD) + '&t=' + Date.now(), { cache: 'no-cache', credentials: cfg.credentials || 'same-origin' });
+  }
+
+  function applyLoadedLots(lotsPayload, fromLive) {
+    lotData = {};
+    applyLotsPayload(lotsPayload);
+    if (typeof updateStats === 'function') updateStats();
+    if (typeof render === 'function') render();
+    liveDataOk = !!fromLive;
+    if (fromLive) showDataNotice('');
+    else showDataNotice('Offline data from ' + (formatDataDate(lotsPayload && lotsPayload.generated_at) || 'the last build'));
+    if (selId) {
+      const shape = SHAPES.find(function (s) { return s.id === selId; });
+      if (shape) selectShape(shape);
+    }
+  }
+
+  async function refreshLiveLots(cfg, silent) {
+    try {
+      const data = await loadLiveLots(cfg);
+      applyLoadedLots(data, true);
+      return true;
+    } catch (err) {
+      if (!silent) console.warn('Live lot data unavailable', err && err.message);
+      return false;
+    }
   }
 
   async function boot() {
     mergeI18n();
     const cfg = window.TA_INTERNAL || { dataUrl: './lots.json', shapesUrl: './shapes.json', credentials: 'same-origin' };
     const bootEl = document.getElementById('ta-boot');
+    const tag = document.getElementById('build-tag');
+    if (tag) tag.textContent = BUILD;
     try {
       const opts = { credentials: cfg.credentials || 'same-origin', cache: 'no-cache' };
-      const shapesRes = await fetch(cfg.shapesUrl || './shapes.json', opts);
+      const shapesUrl = (cfg.shapesUrl || './shapes.json');
+      const shapesSep = shapesUrl.indexOf('?') >= 0 ? '&' : '?';
+      const shapesRes = await fetch(shapesUrl + shapesSep + 'v=' + encodeURIComponent(BUILD) + '&t=' + Date.now(), opts);
       if (!shapesRes.ok) throw new Error('shapes ' + shapesRes.status);
-      const lotsRes = await fetch(cfg.dataUrl || './lots.json', opts);
-      if (!lotsRes.ok) throw new Error('lots ' + lotsRes.status);
       const shapesPayload = await shapesRes.json();
-      const lotsPayload = await lotsRes.json();
       SHAPES = shapesPayload.shapes || shapesPayload;
-      lotData = {};
-      applyLotsPayload(lotsPayload);
+
+      var lotsPayload = null;
+      var fromLive = false;
+      try {
+        lotsPayload = await loadLiveLots(cfg);
+        fromLive = true;
+      } catch (liveErr) {
+        lotsPayload = await loadBundledLots(cfg);
+        fromLive = false;
+      }
+      if (!lotsPayload || !lotsPayload.lots) throw new Error('lots missing');
+      applyLoadedLots(lotsPayload, fromLive);
       if (bootEl) bootEl.hidden = true;
       if (typeof init === 'function') init();
       syncOrientation();
+      document.addEventListener('visibilitychange', function () {
+        if (document.visibilityState === 'visible') refreshLiveLots(cfg, true);
+      });
+      window.addEventListener('pageshow', function () { refreshLiveLots(cfg, true); });
     } catch (err) {
-      if (bootEl) bootEl.textContent = 'Could not load the plan.';
+      if (bootEl) {
+        bootEl.hidden = false;
+        bootEl.textContent = 'Could not load the plan.';
+      }
+      showDataNotice('Could not load lot data');
       console.warn('Internal plan failed to load', err);
     }
   }

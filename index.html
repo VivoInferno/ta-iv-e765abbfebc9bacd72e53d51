@@ -489,6 +489,8 @@ html,body{height:auto;overflow-x:hidden;overflow-y:auto}
   </button>
 </header>
 
+<div id="data-notice" hidden></div>
+<div id="build-tag" aria-hidden="true">v6</div>
 <div class="layout">
 <div class="mapwrap" id="mapwrap">
   <div id="mapContainer">
@@ -567,13 +569,13 @@ html,body{height:auto;overflow-x:hidden;overflow-y:auto}
       <div class="lcid" id="c-id"></div>
       <div class="lctype" id="c-type"></div>
     </div>
+    <div class="lcrow" id="c-status-row" style="border:none"><span class="lck">Status</span><span class="lcbadge" id="c-badge"></span></div>
+    <button type="button" class="btn-view-buyer" id="btn-view-buyer" hidden>View Buyer Info</button>
+    <div class="internal-rows private-info" id="c-internal"></div>
     <div class="lcrow"><span class="lck" data-i18n="cat">Category</span><span class="lcv" id="c-cat">-</span></div>
     <div class="lcrow"><span class="lck" data-i18n="area">Area</span><span class="lcv" id="c-sz">-</span></div>
     <div class="lcrow"><span class="lck" data-i18n="pricepm">Price / m&#178;</span><span class="lcv" id="c-pm">-</span></div>
     <div class="lcrow"><span class="lck" data-i18n="total">Total Price</span><span class="lcv" id="c-tot">-</span></div>
-    <div class="lcrow" style="border:none"><span class="lck">Status</span><span class="lcbadge" id="c-badge"></span></div>
-    <button type="button" class="btn-view-buyer" id="btn-view-buyer" hidden>View Buyer Info</button>
-    <div class="internal-rows private-info" id="c-internal"></div>
     <div class="lcacts" id="c-acts">
       <button type="button" class="lcinq" id="c-inq" onclick="openLotInquiry()">Inquire About This Lot &#8594;</button>
       <a class="lcinq lc-sec" id="c-wa" href="https://wa.me/529541399339" target="_blank" rel="noopener" data-cta="lot-whatsapp" data-magnet="none"><svg class="lc-wa-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#wa-glyph"/></svg><span>Chat on WhatsApp</span></a>
@@ -1402,6 +1404,7 @@ function fitMapMobile() { fitMap(); }
       const ns = Math.min(8, Math.max(0.1, scale * f));
       tx_val = mx - (mx - tx_val) * (ns / scale);
       ty_val = my - (my - ty_val) * (ns / scale);
+      tx = tx_val; ty = ty_val;
       scale = ns;
       cont.style.transform = `translate(${tx_val}px,${ty_val}px) scale(${scale})`;
       lastDist = dist;
@@ -1423,11 +1426,21 @@ function init(){
     syncMobLang(curLang);
     syncMobCur(curCur);
   }
-  window.addEventListener('resize', () => fitMap());
+  window.__taOrient = window.innerWidth > window.innerHeight ? 'l' : 'p';
+  window.addEventListener('resize', () => {
+    const o = window.innerWidth > window.innerHeight ? 'l' : 'p';
+    if (o !== window.__taOrient) {
+      window.__taOrient = o;
+      fitMap();
+    }
+  });
+  window.addEventListener('orientationchange', () => {
+    setTimeout(() => { window.__taOrient = window.innerWidth > window.innerHeight ? 'l' : 'p'; fitMap(); }, 80);
+  });
 }
 // init() is called from internal.js after lots load
 </script>
-<script>window.TA_INTERNAL = { dataUrl: "./lots.json", shapesUrl: "./shapes.json", credentials: "same-origin" };</script>
+<script>window.TA_INTERNAL = { dataUrl: "./lots.json", shapesUrl: "./shapes.json", liveUrl: 'https://tresaguas.mx/wp-json/ta-internal/v1/app-data?k=16b5e1718dce9c5361f88014a62f567cbc42020a7efcf2d7', build: "v6", credentials: "same-origin" };</script>
 <script src="internal.js"></script>
 
 </body>

@@ -142,7 +142,7 @@ header .mob-menu-btn {
 }
 .sb::-webkit-scrollbar { width: 2px; }
 .sb::-webkit-scrollbar-thumb { background: rgba(200, 169, 110, 0.2); }
-.lcard { margin-bottom: 0 !important; }
+.lcard { margin-bottom: 0 !important; padding: 8px 10px !important; }
 .lcard.on { display: block !important; }
 .internal-notes {
   max-height: none !important;
@@ -180,7 +180,7 @@ header .mob-menu-btn {
   text-overflow: ellipsis;
 }
 .sb .lctype { flex: 0 0 auto; font-size: 0.72em; }
-.sb .lcrow { padding-top: 5px !important; padding-bottom: 5px !important; }
+.sb .lcrow { padding-top: 3px !important; padding-bottom: 3px !important; }
 .sb .lck { flex: 0 0 auto; padding-right: 6px; font-size: 0.78em; }
 .sb .lcv:not(.internal-notes) {
   flex: 1 1 auto;
@@ -212,8 +212,8 @@ header .mob-menu-btn {
 .btn-view-buyer {
   display: block;
   width: 100%;
-  margin: 10px 0 8px;
-  padding: 8px 10px;
+  margin: 6px 0 6px;
+  padding: 7px 10px;
   background: #C8A96E;
   color: #0A0A0A;
   border: none;
@@ -341,3 +341,39 @@ header .mob-menu-btn {
   40% { transform: rotate(90deg); }
 }
 
+
+/* Compact private block so status + button + blur fit on a small landscape iPhone. */
+.sb { padding-top: 8px !important; }
+#c-status-row { margin-top: 2px; }
+.private-info.is-blurred { max-height: 5.6rem; }
+#build-tag {
+  position: fixed;
+  left: max(6px, env(safe-area-inset-left));
+  bottom: max(4px, env(safe-area-inset-bottom));
+  z-index: 30;
+  font-family: var(--sans), Montserrat, sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: lowercase;
+  color: rgba(255,255,255,0.38);
+  pointer-events: none;
+  line-height: 1;
+}
+#data-notice {
+  position: fixed;
+  left: max(8px, env(safe-area-inset-left));
+  top: auto;
+  bottom: max(18px, calc(env(safe-area-inset-bottom) + 14px));
+  z-index: 30;
+  max-width: 46vw;
+  padding: 4px 8px;
+  border-radius: 3px;
+  background: rgba(10,10,10,0.82);
+  color: #E8D4A8;
+  font-family: var(--sans), Montserrat, sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  line-height: 1.3;
+  pointer-events: none;
+}
+#data-notice[hidden] { display: none !important; }
