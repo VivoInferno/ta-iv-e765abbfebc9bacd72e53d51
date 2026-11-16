@@ -70,11 +70,21 @@ header {
   gap: 10px;
   box-sizing: content-box;
 }
-header .logo {
-  display: inline !important;
+header .nav-logo {
+  display: flex !important;
+  align-items: center;
   position: static !important;
-  font-size: 1.2rem !important;
   flex-shrink: 0;
+  color: #fff !important;
+  line-height: 0;
+  letter-spacing: 0;
+}
+header .nav-logo .logo-svg-nav {
+  display: block !important;
+  height: 22px;
+  width: auto;
+  flex-shrink: 0;
+  aspect-ratio: 2032 / 208;
 }
 header .hstats {
   display: none !important;
@@ -219,14 +229,19 @@ input, select, textarea { font-size: 16px; }
 #rotate-gate[hidden] { display: none !important; }
 .rotate-card { text-align: center; max-width: 22rem; }
 .rotate-logo {
-  font-family: var(--serif), Georgia, serif;
-  font-size: 1.8rem;
-  font-weight: 300;
-  letter-spacing: 0.2em;
   color: #fff;
+  line-height: 0;
+  letter-spacing: 0;
   margin: 0 0 28px;
 }
-.rotate-logo em { color: #C8A96E; font-style: italic; }
+.rotate-logo .logo-svg-nav {
+  display: block;
+  height: 28px;
+  width: auto;
+  margin: 0 auto;
+  aspect-ratio: 2032 / 208;
+  color: #fff;
+}
 .rotate-icon {
   width: 72px;
   height: 44px;

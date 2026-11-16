@@ -2,7 +2,7 @@
 //  - app shell (html/js/css/json): network-first with cache: 'no-cache' and a 3.5s timeout
 //  - icons and the map image: cache-first
 //  - new versions activate immediately (skipWaiting + clients.claim); the page reloads once on controllerchange
-const CACHE = 'ta-internal-v2';
+const CACHE = 'ta-internal-v3';
 const ASSETS = [
   './',
   'index.html',
@@ -12,8 +12,11 @@ const ASSETS = [
   'shapes.json',
   'manifest.json',
   'map.webp',
+  'icons/logo.svg',
+  'icons/icon-180.png',
   'icons/icon-192.png',
   'icons/icon-512.png',
+  'icons/icon-512-maskable.png',
   'icons/apple-touch-icon.png'
 ];
 const NET_TIMEOUT = 3500;
