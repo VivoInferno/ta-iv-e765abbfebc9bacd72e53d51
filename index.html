@@ -447,8 +447,17 @@ html,body{height:auto;overflow-x:hidden;overflow-y:auto}
 }
 
 </style>
+<link rel="stylesheet" href="internal.css" data-late="1">
 </head>
 <body>
+<div id="rotate-gate" hidden>
+  <div class="rotate-card">
+    <div class="rotate-logo">Tres <em>Aguas</em></div>
+    <div class="rotate-icon" aria-hidden="true"></div>
+    <p id="rotate-msg">Rotate your phone</p>
+  </div>
+</div>
+
 <div id="ta-boot">Loading plan</div>
 <h1 class="sr-only">Tres Aguas Internal Plan</h1>
 <header>
@@ -465,6 +474,11 @@ html,body{height:auto;overflow-x:hidden;overflow-y:auto}
     <div class="hs"><div class="hs-n" id="h-tt">-</div><div class="hs-l" id="lbl-tt">Total Lots</div></div>
   </div>
   <div class="header-right">
+    <div class="cur-toggle" id="tg-cur" role="group" aria-label="Currency">
+      <button type="button" class="cur-btn active" onclick="setCur('MXN')" id="co-MXN" aria-pressed="true">MXN</button>
+      <button type="button" class="cur-btn" onclick="setCur('USD')" id="co-USD" aria-pressed="false">USD</button>
+      <button type="button" class="cur-btn" onclick="setCur('CAD')" id="co-CAD" aria-pressed="false">CAD</button>
+    </div>
     <div class="cur-toggle lang-toggle" id="tg-lang" role="group" aria-label="Language">
       <button type="button" class="cur-btn active" onclick="setLang('en')" id="lo-en" aria-pressed="true">EN</button>
       <button type="button" class="cur-btn" onclick="setLang('es')" id="lo-es" aria-pressed="false">ES</button>
@@ -498,11 +512,7 @@ html,body{height:auto;overflow-x:hidden;overflow-y:auto}
 </div>
 
 <div class="sb">
-  <div class="cur-toggle" id="tg-cur" role="group" aria-label="Currency">
-    <button type="button" class="cur-btn active" onclick="setCur('MXN')" id="co-MXN" aria-pressed="true">MXN</button>
-    <button type="button" class="cur-btn" onclick="setCur('USD')" id="co-USD" aria-pressed="false">USD</button>
-    <button type="button" class="cur-btn" onclick="setCur('CAD')" id="co-CAD" aria-pressed="false">CAD</button>
-  </div>
+  
 
   <div class="legt" id="lbl-lots">Lot Type</div>
   <div class="legr" id="lr-GP" style="--tc:#C8A96E" onclick="filt('GP')">
@@ -647,6 +657,7 @@ html,body{height:auto;overflow-x:hidden;overflow-y:auto}
   <div class="tt-r"><span class="tt-k" id="ttk-m2">Area</span><span class="tt-v" id="t-m2"></span></div>
   <div class="tt-r"><span class="tt-k" id="ttk-pm">Price/m&#178;</span><span class="tt-v" id="t-p2"></span></div>
   <div class="tt-r"><span class="tt-k" id="ttk-tot">Total</span><span class="tt-v" id="t-tot"></span></div>
+</div>
 
 <script>
 let SHAPES = [];
@@ -1184,7 +1195,7 @@ async function submitModalForm(e) {
 document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && document.getElementById('modal').classList.contains('active')) closeModal(); });
 
 // \u2500\u2500\u2500 Mobile \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
-const isMobile = () => window.innerWidth <= 768;
+const isMobile = () => true;
 
 // Sheet peek height (how much shows when collapsed)
 document.documentElement.style.setProperty('--sheet-peek', '110px');
@@ -1417,5 +1428,6 @@ function init(){
 </script>
 <script>window.TA_INTERNAL = { dataUrl: "./lots.json", shapesUrl: "./shapes.json", credentials: "same-origin" };</script>
 <script src="internal.js"></script>
+
 </body>
 </html>

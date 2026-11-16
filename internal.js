@@ -38,7 +38,8 @@
       statPe: 'Pending',
       statMp: 'Paying',
       title: 'Tres Aguas Internal Plan',
-      noDetail: 'Tap a lot to see details'
+      noDetail: 'Tap a lot to see details',
+      rotate: 'Rotate your phone'
     },
     es: {
       pending: 'Pendiente',
@@ -57,7 +58,8 @@
       statPe: 'Pendiente',
       statMp: 'En pago',
       title: 'Plan interno Tres Aguas',
-      noDetail: 'Toca un lote para ver detalles'
+      noDetail: 'Toca un lote para ver detalles',
+      rotate: 'Gira el telefono'
     }
   };
 
@@ -326,35 +328,61 @@
       const status = data ? data.status : 'available';
       const isAmenity = !!(data && data.amenity);
       const isDashedAmenity = !!(data && data.amenity && (shape.tier === 'SC' || shape.tier === 'DS'));
-      const fillHex = STATUS_FILL[status] || c;
-      const baseA = status === 'available' ? (isAmenity ? 0.28 : 0.62) : (status === 'sold' ? 0.45 : 0.58);
-      const fa = baseA;
+      const isSoldStyle = !isAmenity && status !== 'available';
+      const baseA = isAmenity ? 0.28 : 0.62;
+      const fa = isSoldStyle ? 0.0 : baseA;
       const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
       poly.setAttribute('points', ptsStr(shape.pts));
-      poly.setAttribute('fill', hexA(fillHex, fa));
+      poly.setAttribute('fill', fa > 0 ? hexA(c, fa) : 'none');
       if (shape.id === selId) {
-        poly.setAttribute('stroke', fillHex);
+        poly.setAttribute('stroke', c);
         poly.setAttribute('stroke-width', '3');
+        poly.setAttribute('fill', c);
         poly.setAttribute('fill-opacity', '0.88');
-      } else if (isDashedAmenity && status === 'available') {
+        const animFill = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+        animFill.setAttribute('attributeName', 'fill-opacity');
+        animFill.setAttribute('values', '0.88;1;0.88');
+        animFill.setAttribute('dur', '1.4s');
+        animFill.setAttribute('repeatCount', 'indefinite');
+        poly.appendChild(animFill);
+        const animStroke = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+        animStroke.setAttribute('attributeName', 'stroke-opacity');
+        animStroke.setAttribute('values', '0.8;1;0.8');
+        animStroke.setAttribute('dur', '1.4s');
+        animStroke.setAttribute('repeatCount', 'indefinite');
+        poly.appendChild(animStroke);
+        const animWidth = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+        animWidth.setAttribute('attributeName', 'stroke-width');
+        animWidth.setAttribute('values', '3;5;3');
+        animWidth.setAttribute('dur', '1.4s');
+        animWidth.setAttribute('repeatCount', 'indefinite');
+        poly.appendChild(animWidth);
+      } else if (isDashedAmenity) {
         poly.setAttribute('stroke', hexA(c, 0.9));
         poly.setAttribute('stroke-width', '2');
         poly.setAttribute('stroke-dasharray', '3 3');
+      } else if (isSoldStyle) {
+        poly.setAttribute('stroke', hexA(c, 0.35));
+        poly.setAttribute('stroke-width', '1.5');
       } else {
-        poly.setAttribute('stroke', hexA(fillHex, 0.9));
-        poly.setAttribute('stroke-width', status === 'sold' ? '1.5' : '1.8');
+        poly.setAttribute('stroke', hexA(c, 0.85));
+        poly.setAttribute('stroke-width', '1.8');
       }
       poly.style.cursor = 'pointer';
+      poly.style.transition = 'fill 0.15s';
       poly.style.touchAction = 'manipulation';
       const isSel = shape.id === selId;
       const restStroke = poly.getAttribute('stroke');
       poly.addEventListener('mouseenter', function (e) {
-        if (!isSel) poly.setAttribute('fill', hexA(fillHex, Math.min(0.88, fa + 0.2)));
+        if (!isSel) {
+          poly.setAttribute('fill', hexA(c, isSoldStyle ? 0.15 : isAmenity ? 0.45 : 0.82));
+          if (!isSoldStyle && !isAmenity) poly.setAttribute('stroke', c);
+        }
         if (canHover) showTT(e, shape);
       });
       poly.addEventListener('mousemove', function (e) { if (canHover) moveTT(e); });
       poly.addEventListener('mouseleave', function () {
-        if (!isSel) { poly.setAttribute('fill', hexA(fillHex, fa)); poly.setAttribute('stroke', restStroke); }
+        if (!isSel) { poly.setAttribute('fill', fa > 0 ? hexA(c, fa) : 'none'); poly.setAttribute('stroke', restStroke); }
         hideTT();
       });
       poly.addEventListener('click', function () { hideTT(); selectShape(shape); });
@@ -511,6 +539,8 @@
     const ttk = document.getElementById('ttk-buyer');
     if (ttk) ttk.textContent = ti('buyer');
     document.documentElement.lang = curLang === 'es' ? 'es' : 'en';
+    const rotateMsg = document.getElementById('rotate-msg');
+    if (rotateMsg) rotateMsg.textContent = ti('rotate');
     const title = document.querySelector('title');
     if (title) title.textContent = ti('title');
     if (selId) {
@@ -518,6 +548,48 @@
       if (shape) selectShape(shape);
     }
   };
+
+  function syncOrientation() {
+    const portrait = (window.matchMedia && window.matchMedia('(orientation: portrait)').matches)
+      || (window.innerHeight > window.innerWidth);
+    const gate = document.getElementById('rotate-gate');
+    if (gate) gate.hidden = !portrait;
+    document.documentElement.classList.toggle('is-portrait', !!portrait);
+    document.body.classList.toggle('is-portrait', !!portrait);
+  }
+
+
+  window.fitMap = function fitMap() {
+    const wrap = document.getElementById('mapwrap');
+    const cont = document.getElementById('mapContainer');
+    if (!wrap || !cont) return;
+    const W = wrap.clientWidth;
+    const H = wrap.clientHeight;
+    if (!W || !H) return;
+    const s = Math.max(W / 2592, H / 1728);
+    const ntx = (W - 2592 * s) / 2;
+    const nty = (H - 1728 * s) / 2;
+    scale = s;
+    tx = ntx;
+    ty = nty;
+    tx_val = ntx;
+    ty_val = nty;
+    cont.style.transform = 'translate(' + ntx + 'px,' + nty + 'px) scale(' + s + ')';
+  };
+
+  function installOrientationLock() {
+    syncOrientation();
+    window.addEventListener('resize', syncOrientation);
+    window.addEventListener('orientationchange', syncOrientation);
+    if (window.matchMedia) {
+      const mq = window.matchMedia('(orientation: portrait)');
+      if (mq.addEventListener) mq.addEventListener('change', syncOrientation);
+      else if (mq.addListener) mq.addListener(syncOrientation);
+    }
+  }
+
+  document.documentElement.style.setProperty('--sheet-peek', '72px');
+  installOrientationLock();
 
   function registerSW() {
     var cfg = window.TA_INTERNAL || {};
@@ -560,6 +632,7 @@
       applyLotsPayload(lotsPayload);
       if (bootEl) bootEl.hidden = true;
       if (typeof init === 'function') init();
+      syncOrientation();
     } catch (err) {
       if (bootEl) bootEl.textContent = 'Could not load the plan.';
       console.warn('Internal plan failed to load', err);

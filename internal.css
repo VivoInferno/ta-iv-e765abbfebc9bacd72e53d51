@@ -1,71 +1,264 @@
-/* Internal plan extras: iOS home-screen, status colours, detail fields, language toggle. */
-html{background:#0A0A0A}
-body{padding-top:env(safe-area-inset-top);padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
-header{padding-top:0;padding-left:max(28px, env(safe-area-inset-left));padding-right:max(28px, env(safe-area-inset-right))}
-.layout,.mapwrap,.sb,.mob-sheet,.mob-drawer{touch-action:manipulation}
-button,.cur-btn,.zbtn,.mob-menu-btn,.legr,.mob-legr{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
-#overlay, #mapContainer, .mapwrap{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
-input,select,textarea{font-size:16px}
+/* Internal iPhone app chrome: edge-to-edge landscape map, no page scroll, no legend. */
 
-/* Language gold pill, same language-toggle treatment as the currency switch. */
-.lang-toggle{margin:0}
-header .header-right .lang-toggle{margin:0}
-@media (max-width:768px){
-  header{padding-left:max(14px, env(safe-area-inset-left));padding-right:max(52px, env(safe-area-inset-right))}
-  header .header-right{display:flex;position:absolute;right:56px;top:50%;transform:translateY(-50%)}
-  header .hstats{display:none}
+html, body {
+  background: #0A0A0A !important;
+  color: #fff;
+  width: 100% !important;
+  width: 100dvw !important;
+  height: 100% !important;
+  height: 100dvh !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  overscroll-behavior: none !important;
+  position: fixed !important;
+  inset: 0 !important;
+  touch-action: none;
+  -webkit-overflow-scrolling: auto;
 }
 
-/* Status chips and extra detail rows */
-.strow{display:flex;flex-wrap:wrap;gap:10px 14px;padding:4px 0 2px}
-.internal-rows{margin-top:6px}
-.internal-rows .lcrow{align-items:flex-start}
-.internal-notes{white-space:pre-wrap;font-size:0.78rem;line-height:1.45;max-height:8.5rem;overflow:auto;color:rgba(255,255,255,0.88)}
-.share-block{margin:8px 0 0;padding:8px 0 0;border-top:1px solid rgba(255,255,255,0.08)}
-.share-label{font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
-.lcbadge.is-available{background:rgba(45,106,79,0.25);color:#4CAF7A;border:1px solid rgba(45,106,79,0.4)}
-.lcbadge.is-pending{background:rgba(212,160,23,0.28);color:#F0C14B;border:1px solid rgba(212,160,23,0.5)}
-.lcbadge.is-making_payment{background:rgba(61,122,140,0.32);color:#8ED3E0;border:1px solid rgba(61,122,140,0.55)}
-.lcbadge.is-sold{background:rgba(139,26,26,0.25);color:#E57373;border:1px solid rgba(139,26,26,0.4)}
-.lcbadge.is-split{background:rgba(107,76,154,0.32);color:#C9B6E8;border:1px solid rgba(107,76,154,0.55)}
-.lcbadge.is-firm30{background:rgba(224,122,61,0.28);color:#F4B183;border:1px solid rgba(224,122,61,0.5)}
-.lcbadge.is-firm100{background:rgba(42,157,143,0.28);color:#7FDECB;border:1px solid rgba(42,157,143,0.5)}
-
-/* Hide public inquiry / WhatsApp CTAs on the internal app */
-#c-acts,#mob-acts,.wa-float,#modal,#wa-float{display:none !important}
-
-/* Tooltip: allow more rows, keep typography consistent */
-.tt{max-width:280px}
-.tt .tt-r.internal{display:flex}
-.tt.is-touch{display:none !important}
-
-/* Stats: five compact figures on desktop */
-header .hstats{gap:14px;left:max(16px, env(safe-area-inset-left))}
-.hstats .hs-l{font-size:0.48rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.55)}
-@media (max-width:1100px){
-  header .hstats{display:none}
+/* The map fills the whole screen, including the notch and home-indicator sides. */
+.layout {
+  position: fixed !important;
+  inset: 0 !important;
+  display: block !important;
+  width: 100vw !important;
+  width: 100dvw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  min-height: 0 !important;
+  flex: none !important;
+  overflow: hidden !important;
+  z-index: 1;
+}
+.mapwrap {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: #ede8dc !important;
+  touch-action: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+#mapContainer, #overlay, #planObj {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
-/* Mobile sheet needs more room for payment fields */
-.mob-sheet.open{max-height:min(78vh, 640px)}
-.mob-stats{display:flex !important;justify-content:space-between;gap:8px;padding:4px 0 10px}
-.mob-stat-l{font-size:0.5rem;letter-spacing:0.1em;text-transform:uppercase}
+/* Compact bar sits on top of the map; the map still runs underneath to the edges. */
+header {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  height: auto !important;
+  min-height: 48px;
+  padding-top: env(safe-area-inset-top) !important;
+  padding-left: max(12px, env(safe-area-inset-left)) !important;
+  padding-right: max(12px, env(safe-area-inset-right)) !important;
+  padding-bottom: 0 !important;
+  background: rgba(10, 10, 10, 0.92) !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  box-sizing: content-box;
+}
+header .logo {
+  display: inline !important;
+  position: static !important;
+  font-size: 1.2rem !important;
+  flex-shrink: 0;
+}
+header .hstats {
+  display: none !important;
+}
+header .header-right {
+  display: flex !important;
+  position: static !important;
+  transform: none !important;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+header .header-right .cur-toggle {
+  margin: 0;
+}
+header .mob-menu-btn {
+  display: none !important;
+}
 
-/* Loading / error gate (no lot data in the fallback markup) */
-#ta-boot{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#0A0A0A;color:#E8D4A8;font-family:var(--sans);letter-spacing:0.14em;text-transform:uppercase;font-size:0.72rem;z-index:40}
-#ta-boot[hidden]{display:none !important}
+/* No lot-type legend, no desktop sidebar, no leftover marketing chrome. */
+.sb,
+.legt, .legr, .strow,
+#mob-drawer, #mob-overlay, #mob-menu-btn,
+#c-acts, #mob-acts, .wa-float, #modal, #wa-float,
+#site-nav, #site-nav-spacer, #site-footer {
+  display: none !important;
+}
 
-/* Keep internal detail fields reachable */
-.sb{overflow-y:auto;-webkit-overflow-scrolling:touch}
-.lcard.on{max-height:none}
-.lcid{overflow-wrap:anywhere;hyphens:manual}
-.mob-sheet-body{overflow-y:auto;-webkit-overflow-scrolling:touch;max-height:calc(78vh - 90px);padding-bottom:env(safe-area-inset-bottom)}
-header .hstats{gap:10px;max-width:calc(100% - 220px);flex-wrap:wrap}
-.hstats .hs-n{font-size:0.95rem}
-.hstats .hs-l{font-size:0.42rem}
-.sb .lcrow{flex-wrap:wrap;align-items:flex-start;gap:4px 8px}
-.sb .lck{flex:0 0 auto;max-width:46%}
-.sb .lcv{flex:1 1 7rem;text-align:right}
-.sb .internal-notes{flex-basis:100%;text-align:left;max-height:7rem}
-.sb .lcid{white-space:nowrap;font-size:1.05rem}
-.sb .lch{gap:8px}
+/* Currency and language pills stay compact in the header. */
+.cur-toggle { margin: 0 !important; align-self: center !important; }
+.lang-toggle { margin: 0 !important; }
+
+button, .cur-btn, .zbtn { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+input, select, textarea { font-size: 16px; }
+
+/* Zoom controls clear the header and the sheet peek, plus the home indicator. */
+.zbtns {
+  right: max(12px, env(safe-area-inset-right)) !important;
+  bottom: calc(var(--sheet-peek, 72px) + 12px + env(safe-area-inset-bottom)) !important;
+  z-index: 150;
+}
+
+/* Lot details use the bottom sheet on every phone size, including landscape. */
+.mob-sheet {
+  display: flex !important;
+  position: fixed !important;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 500;
+  background: rgba(10, 10, 10, 0.97);
+  border-top: 1px solid rgba(200, 169, 110, 0.2);
+  border-radius: 16px 16px 0 0;
+  transform: translateY(calc(100% - var(--sheet-peek, 72px)));
+  transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+  backdrop-filter: blur(16px);
+  max-height: min(70dvh, 640px);
+  overflow: hidden;
+  flex-direction: column;
+  padding-bottom: env(safe-area-inset-bottom);
+  touch-action: none;
+  overscroll-behavior: contain;
+}
+.mob-sheet.open { transform: translateY(0); }
+.mob-handle { flex-shrink: 0; padding: 10px 0 6px; display: flex; justify-content: center; cursor: pointer; }
+.mob-handle-bar { width: 36px; height: 4px; border-radius: 2px; background: rgba(200, 169, 110, 0.3); }
+.mob-peek {
+  flex-shrink: 0;
+  padding: 0 18px 10px;
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(200, 169, 110, 0.5);
+  text-align: center;
+}
+.mob-sheet-body {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  overscroll-behavior: contain;
+  padding: 0 18px 16px;
+  max-height: none;
+}
+.mob-sheet-body::-webkit-scrollbar { display: none; }
+.mob-stats { display: flex !important; justify-content: space-between; gap: 8px; padding: 4px 0 10px; }
+.mob-stat-l { font-size: 0.5rem; letter-spacing: 0.1em; text-transform: uppercase; }
+.tt { display: none !important; }
+
+/* Status still appears as text / a badge in the detail card, not as map colours. */
+.internal-rows { margin-top: 6px; }
+.internal-rows .lcrow { align-items: flex-start; }
+.internal-notes { white-space: pre-wrap; font-size: 0.78rem; line-height: 1.45; max-height: 8.5rem; overflow: auto; color: rgba(255,255,255,0.88); touch-action: pan-y; }
+.share-block { margin: 8px 0 0; padding: 8px 0 0; border-top: 1px solid rgba(255,255,255,0.08); }
+.share-label { font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-bottom: 4px; }
+.lcbadge.is-available { background: rgba(45,106,79,0.25); color: #4CAF7A; border: 1px solid rgba(45,106,79,0.4); }
+.lcbadge.is-pending { background: rgba(212,160,23,0.28); color: #F0C14B; border: 1px solid rgba(212,160,23,0.5); }
+.lcbadge.is-making_payment { background: rgba(61,122,140,0.32); color: #8ED3E0; border: 1px solid rgba(61,122,140,0.55); }
+.lcbadge.is-sold { background: rgba(139,26,26,0.25); color: #E57373; border: 1px solid rgba(139,26,26,0.4); }
+.lcbadge.is-split { background: rgba(107,76,154,0.32); color: #C9B6E8; border: 1px solid rgba(107,76,154,0.55); }
+.lcbadge.is-firm30 { background: rgba(224,122,61,0.28); color: #F4B183; border: 1px solid rgba(224,122,61,0.5); }
+.lcbadge.is-firm100 { background: rgba(42,157,143,0.28); color: #7FDECB; border: 1px solid rgba(42,157,143,0.5); }
+.lcid { overflow-wrap: anywhere; }
+
+#ta-boot {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0A0A0A;
+  color: #E8D4A8;
+  font-family: var(--sans);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  z-index: 40;
+}
+#ta-boot[hidden] { display: none !important; }
+
+/* Portrait: hide the plan and ask the user to rotate. */
+#rotate-gate {
+  position: fixed !important;
+  inset: 0 !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  width: 100dvw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  z-index: 2147483647 !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  background: #0A0A0A !important;
+  pointer-events: auto !important;
+  padding: max(24px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left));
+  box-sizing: border-box;
+}
+#rotate-gate[hidden] { display: none !important; }
+.rotate-card { text-align: center; max-width: 22rem; }
+.rotate-logo {
+  font-family: var(--serif), Georgia, serif;
+  font-size: 1.8rem;
+  font-weight: 300;
+  letter-spacing: 0.2em;
+  color: #fff;
+  margin: 0 0 28px;
+}
+.rotate-logo em { color: #C8A96E; font-style: italic; }
+.rotate-icon {
+  width: 72px;
+  height: 44px;
+  margin: 0 auto 22px;
+  border: 2px solid #C8A96E;
+  border-radius: 8px;
+  position: relative;
+  animation: rotate-hint 1.6s ease-in-out infinite;
+}
+.rotate-icon::after {
+  content: "";
+  position: absolute;
+  right: -2px;
+  top: 12px;
+  width: 4px;
+  height: 16px;
+  background: #C8A96E;
+  border-radius: 0 2px 2px 0;
+}
+#rotate-msg {
+  margin: 0;
+  font-family: var(--sans), Montserrat, sans-serif;
+  font-size: 1rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #E8D4A8;
+}
+@keyframes rotate-hint {
+  0%, 100% { transform: rotate(0deg); }
+  40% { transform: rotate(90deg); }
+}
+
+@media (orientation: landscape) {
+  .mob-sheet { max-height: min(62dvh, 280px); }
+}
