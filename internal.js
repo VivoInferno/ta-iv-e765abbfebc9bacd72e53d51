@@ -182,6 +182,85 @@
     });
   }
 
+
+  var UNKNOWN_MONEY = '\u2014';
+
+  function moneyIsSet(v) {
+    return v != null && v !== '' && isFinite(Number(v));
+  }
+  function moneyNonzero(v) {
+    return moneyIsSet(v) && Number(v) !== 0;
+  }
+  function convertAmount(amount, fromCur, toCur) {
+    if (!moneyIsSet(amount)) return null;
+    amount = Number(amount);
+    if (!fromCur || !toCur || fromCur === toCur) return amount;
+    var usd = (typeof fxRates !== 'undefined' && Number(fxRates.USD) > 0) ? Number(fxRates.USD) : 0.0539;
+    var cad = (typeof fxRates !== 'undefined' && Number(fxRates.CAD) > 0) ? Number(fxRates.CAD) : 0.0768;
+    var mxn;
+    if (fromCur === 'MXN') mxn = amount;
+    else if (fromCur === 'USD') mxn = amount / usd;
+    else if (fromCur === 'CAD') mxn = amount / cad;
+    else return null;
+    if (toCur === 'MXN') return mxn;
+    if (toCur === 'USD') return mxn * usd;
+    if (toCur === 'CAD') return mxn * cad;
+    return null;
+  }
+  function recMoneyField(rec, kind, cur) {
+    var map = {
+      sold: { MXN: 'sold_price_mxn', USD: 'sold_price_usd', CAD: 'sold_price_cad' },
+      paid: { MXN: 'paid_mxn', USD: 'paid_usd', CAD: 'paid_cad' },
+      balance: { MXN: 'balance_mxn', USD: 'balance_usd', CAD: 'balance_cad' }
+    };
+    return rec ? rec[map[kind][cur]] : null;
+  }
+  function recNativeCur(rec) {
+    if (!rec) return null;
+    if (rec.sale_currency) return rec.sale_currency;
+    if (moneyNonzero(rec.sold_price_mxn)) return 'MXN';
+    if (moneyNonzero(rec.sold_price_usd)) return 'USD';
+    if (moneyNonzero(rec.sold_price_cad)) return 'CAD';
+    return null;
+  }
+  function recAmount(rec, kind) {
+    if (!rec) return null;
+    var cur = recNativeCur(rec);
+    var order = cur ? [cur, 'MXN', 'USD', 'CAD'] : ['MXN', 'USD', 'CAD'];
+    var seen = {};
+    for (var i = 0; i < order.length; i++) {
+      var c = order[i];
+      if (seen[c]) continue;
+      seen[c] = 1;
+      var v = recMoneyField(rec, kind, c);
+      if (kind === 'sold') {
+        if (moneyNonzero(v)) return { amount: Number(v), currency: c };
+      } else if (moneyIsSet(v) && (moneyNonzero(v) || c === cur)) {
+        return { amount: Number(v), currency: c };
+      }
+    }
+    return null;
+  }
+  function formatExactMoney(amount, currency) {
+    if (!moneyIsSet(amount)) return UNKNOWN_MONEY;
+    var n = Math.round(Number(amount));
+    return '$' + Number(n).toLocaleString() + ' ' + (currency || curCur);
+  }
+  function formatRecMoney(rec, kind, perM2) {
+    var a = recAmount(rec, kind);
+    if (!a) return UNKNOWN_MONEY;
+    var amt = a.amount;
+    if (perM2) {
+      if (!perM2) return UNKNOWN_MONEY;
+      amt = amt / perM2;
+    }
+    var conv = convertAmount(amt, a.currency, curCur);
+    if (conv == null) return UNKNOWN_MONEY;
+    var text = formatExactMoney(conv, curCur);
+    if (perM2) text += '/m\u00b2';
+    return text;
+  }
+
   function fillMoney(el, mxn, alt) {
     if (!el) return;
     if (curCur === 'USD' && alt && alt.usd) { el.textContent = money(null, alt.usd, false); return; }
@@ -208,19 +287,13 @@
       const k = document.createElement('span'); k.className = 'lck'; k.textContent = pair[0];
       const v = document.createElement('span'); v.className = 'lcv';
       if (pair[0] === ti('salePrice')) {
-        if (curCur === 'USD' && rec.sold_price_usd) v.textContent = money(null, rec.sold_price_usd);
-        else if (curCur === 'CAD' && rec.sold_price_cad) v.textContent = money(null, rec.sold_price_cad);
-        else v.textContent = rec.sold_price_mxn ? money(rec.sold_price_mxn) : '-';
+        v.textContent = formatRecMoney(rec, 'sold');
       } else if (pair[0] === ti('paid')) {
-        if (curCur === 'USD' && rec.paid_usd) v.textContent = money(null, rec.paid_usd);
-        else if (curCur === 'CAD' && rec.paid_cad) v.textContent = money(null, rec.paid_cad);
-        else v.textContent = rec.paid_mxn ? money(rec.paid_mxn) : '-';
+        v.textContent = formatRecMoney(rec, 'paid');
         const p = pctLabel(rec.pct_paid);
-        if (p && v.textContent !== '-') v.textContent += ' (' + p + ')';
+        if (p && v.textContent !== UNKNOWN_MONEY) v.textContent += ' (' + p + ')';
       } else if (pair[0] === ti('balance')) {
-        if (curCur === 'USD' && rec.balance_usd) v.textContent = money(null, rec.balance_usd);
-        else if (curCur === 'CAD' && rec.balance_cad) v.textContent = money(null, rec.balance_cad);
-        else v.textContent = (rec.balance_mxn || rec.balance_mxn === 0) ? money(rec.balance_mxn) : '-';
+        v.textContent = formatRecMoney(rec, 'balance');
       } else {
         v.textContent = pair[1];
       }
@@ -275,21 +348,15 @@
       const v = document.createElement('span'); v.className = 'lcv';
       if (pair[0] === 'sale') {
         k.textContent = ti('salePrice');
-        if (curCur === 'USD' && rec.sold_price_usd) v.textContent = money(null, rec.sold_price_usd);
-        else if (curCur === 'CAD' && rec.sold_price_cad) v.textContent = money(null, rec.sold_price_cad);
-        else v.textContent = rec.sold_price_mxn ? money(rec.sold_price_mxn) : '-';
+        v.textContent = formatRecMoney(rec, 'sold');
       } else if (pair[0] === 'paid') {
         k.textContent = ti('paid');
-        if (curCur === 'USD' && rec.paid_usd) v.textContent = money(null, rec.paid_usd);
-        else if (curCur === 'CAD' && rec.paid_cad) v.textContent = money(null, rec.paid_cad);
-        else v.textContent = rec.paid_mxn ? money(rec.paid_mxn) : '-';
+        v.textContent = formatRecMoney(rec, 'paid');
         const p = pctLabel(rec.pct_paid);
-        if (p && v.textContent !== '-') v.textContent += ' (' + p + ')';
+        if (p && v.textContent !== UNKNOWN_MONEY) v.textContent += ' (' + p + ')';
       } else if (pair[0] === 'balance') {
         k.textContent = ti('balance');
-        if (curCur === 'USD' && rec.balance_usd) v.textContent = money(null, rec.balance_usd);
-        else if (curCur === 'CAD' && rec.balance_cad) v.textContent = money(null, rec.balance_cad);
-        else v.textContent = (rec.balance_mxn || rec.balance_mxn === 0) ? money(rec.balance_mxn) : '-';
+        v.textContent = formatRecMoney(rec, 'balance');
       } else {
         k.textContent = pair[0];
         v.textContent = pair[1] || '-';
@@ -311,8 +378,9 @@
     const rec = data.primary;
     const isClosed = data.status && data.status !== 'available' && data.status !== 'pending';
     const showList = data.status === 'available' || data.status === 'pending';
-    const pm = showList ? (data.perm2 || (prices && prices[data.type]) || 0) : (rec && rec.sold_price_mxn && data.size ? rec.sold_price_mxn / data.size : 0);
-    const tot = showList ? (data.list_price || (pm && data.size ? pm * data.size : 0)) : (rec && rec.sold_price_mxn) || 0;
+    const soldAmt = recAmount(rec, 'sold');
+    const pm = showList ? (data.perm2 || (prices && prices[data.type]) || 0) : (soldAmt && data.size ? soldAmt.amount / data.size : 0);
+    const tot = showList ? (data.list_price || (pm && data.size ? pm * data.size : 0)) : (soldAmt ? soldAmt.amount : 0);
     return { pm: pm, tot: tot, hide: !showList && !tot, showList: showList, isClosed: isClosed };
   }
 
@@ -457,8 +525,8 @@
       document.getElementById('t-p2').textContent = pr.pm ? fmtPrice(pr.pm, true) : '-';
       document.getElementById('t-tot').textContent = pr.tot ? fmtPrice(pr.tot, false) : '-';
     } else {
-      document.getElementById('t-p2').textContent = '-';
-      document.getElementById('t-tot').textContent = rec && rec.sold_price_mxn ? money(rec.sold_price_mxn) : '-';
+      document.getElementById('t-p2').textContent = rec && data && data.size ? formatRecMoney(rec, 'sold', data.size) : UNKNOWN_MONEY;
+      document.getElementById('t-tot').textContent = formatRecMoney(rec, 'sold');
     }
     const buyerEl = document.getElementById('t-buyer');
     const buyRow = document.getElementById('tt-buyer-row');
@@ -508,19 +576,50 @@
     });
   }
 
+  function snapshotMapTransform() {
+    const cont = document.getElementById('mapContainer');
+    return {
+      scale: scale,
+      tx: tx,
+      ty: ty,
+      tx_val: (typeof tx_val !== 'undefined') ? tx_val : tx,
+      ty_val: (typeof ty_val !== 'undefined') ? ty_val : ty,
+      transform: cont ? String(cont.style.transform || '') : ''
+    };
+  }
+  function restoreMapTransform(snap) {
+    if (!snap) return;
+    scale = snap.scale;
+    tx = snap.tx;
+    ty = snap.ty;
+    if (typeof tx_val !== 'undefined') tx_val = snap.tx_val;
+    if (typeof ty_val !== 'undefined') ty_val = snap.ty_val;
+    const cont = document.getElementById('mapContainer');
+    if (cont) {
+      if (snap.transform) cont.style.transform = snap.transform;
+      else cont.style.transform = 'translate(' + tx + 'px,' + ty + 'px) scale(' + scale + ')';
+    }
+  }
+  function withMapFrozen(fn) {
+    const snap = snapshotMapTransform();
+    try { fn(); }
+    finally { restoreMapTransform(snap); }
+  }
+
   function revealBuyerInfo() {
-    buyerUnlocked = true;
-    const box = document.getElementById('c-internal');
-    const btn = document.getElementById('btn-view-buyer');
-    if (box) {
-      box.classList.remove('is-blurred');
-      box.setAttribute('aria-hidden', 'false');
-    }
-    if (btn) {
-      btn.hidden = true;
-      btn.setAttribute('aria-expanded', 'true');
-    }
-    if (typeof fitLotPanel === 'function') fitLotPanel();
+    withMapFrozen(function () {
+      buyerUnlocked = true;
+      const box = document.getElementById('c-internal');
+      const btn = document.getElementById('btn-view-buyer');
+      if (box) {
+        box.classList.remove('is-blurred');
+        box.setAttribute('aria-hidden', 'false');
+      }
+      if (btn) {
+        btn.hidden = true;
+        btn.setAttribute('aria-expanded', 'true');
+      }
+    });
   }
 
   function fitLotPanel() {
@@ -560,7 +659,16 @@
     root.style.setProperty('--sb-width', finalW + 'px');
   }
 
+  function hideBuyerInfo() {
+    withMapFrozen(function () {
+      buyerUnlocked = false;
+      const data = (typeof lotData !== 'undefined' && typeof selId !== 'undefined') ? lotData[selId] : null;
+      applyBuyerPrivacy(data);
+    });
+  }
   window.revealBuyerInfo = revealBuyerInfo;
+  window.hideBuyerInfo = hideBuyerInfo;
+  window.applyBuyerPrivacy = applyBuyerPrivacy;
   window.fitLotPanel = fitLotPanel;
 
   window.selectShape = function selectShape(shape) {
@@ -594,8 +702,8 @@
         if (pmLbl) pmLbl.textContent = t('pricepm');
         if (totLbl) totLbl.textContent = t('total');
       } else {
-        document.getElementById('c-pm').textContent = rec && rec.sold_price_mxn && data.size ? money(rec.sold_price_mxn / data.size, rec.sold_price_usd && data.size ? rec.sold_price_usd / data.size : null, true) : '-';
-        fillMoney(document.getElementById('c-tot'), rec && rec.sold_price_mxn, rec && { usd: rec.sold_price_usd, cad: rec.sold_price_cad });
+        document.getElementById('c-pm').textContent = rec && data.size ? formatRecMoney(rec, 'sold', data.size) : UNKNOWN_MONEY;
+        document.getElementById('c-tot').textContent = formatRecMoney(rec, 'sold');
         const totLbl = document.getElementById('c-tot').previousElementSibling;
         if (totLbl) totLbl.textContent = ti('salePrice');
       }
@@ -639,8 +747,8 @@
         document.getElementById('mob-c-pm').textContent = pr.pm ? fmtPrice(pr.pm, true) : '-';
         document.getElementById('mob-c-tot').textContent = pr.tot ? fmtPrice(Math.round(pr.tot), false) : '-';
       } else {
-        document.getElementById('mob-c-pm').textContent = rec && rec.sold_price_mxn && data.size ? money(rec.sold_price_mxn / data.size, null, true) : '-';
-        fillMoney(document.getElementById('mob-c-tot'), rec && rec.sold_price_mxn, rec && { usd: rec.sold_price_usd, cad: rec.sold_price_cad });
+        document.getElementById('mob-c-pm').textContent = rec && data.size ? formatRecMoney(rec, 'sold', data.size) : UNKNOWN_MONEY;
+        document.getElementById('mob-c-tot').textContent = formatRecMoney(rec, 'sold');
       }
       styleBadge(document.getElementById('mob-c-badge'), data.status);
     }
@@ -717,10 +825,24 @@
 
   document.documentElement.style.setProperty('--sheet-peek', '72px');
   installOrientationLock();
-  document.addEventListener('click', function (e) {
-    const btn = e.target && e.target.closest && e.target.closest('#btn-view-buyer');
-    if (btn) { e.preventDefault(); revealBuyerInfo(); }
+  function isViewBuyerBtn(el) {
+    return !!(el && el.closest && el.closest('#btn-view-buyer'));
+  }
+  function stopBuyerBtnBubble(e) {
+    if (!isViewBuyerBtn(e.target)) return;
+    if (e.stopPropagation) e.stopPropagation();
+    if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+  }
+  ['pointerdown', 'touchstart', 'mousedown', 'pointerup', 'touchend', 'mouseup'].forEach(function (type) {
+    document.addEventListener(type, stopBuyerBtnBubble, true);
   });
+  document.addEventListener('click', function (e) {
+    if (!isViewBuyerBtn(e.target)) return;
+    e.preventDefault();
+    if (e.stopPropagation) e.stopPropagation();
+    if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+    revealBuyerInfo();
+  }, true);
   window.addEventListener('resize', function () { fitLotPanel(); });
 
 
@@ -748,7 +870,7 @@
     });
   }
 
-  const BUILD = (window.TA_INTERNAL && window.TA_INTERNAL.build) || 'v6';
+  const BUILD = (window.TA_INTERNAL && window.TA_INTERNAL.build) || 'v7';
   var liveDataOk = false;
 
   function showDataNotice(msg) {
