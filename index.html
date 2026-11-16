@@ -1195,7 +1195,7 @@ async function submitModalForm(e) {
 document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && document.getElementById('modal').classList.contains('active')) closeModal(); });
 
 // \u2500\u2500\u2500 Mobile \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
-const isMobile = () => true;
+const isMobile = () => window.innerHeight > window.innerWidth;
 
 // Sheet peek height (how much shows when collapsed)
 document.documentElement.style.setProperty('--sheet-peek', '110px');

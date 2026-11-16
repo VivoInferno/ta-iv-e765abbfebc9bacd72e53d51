@@ -15,29 +15,37 @@ html, body {
   overscroll-behavior: none !important;
   position: fixed !important;
   inset: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
   touch-action: none;
   -webkit-overflow-scrolling: auto;
 }
 
-/* The map fills the whole screen, including the notch and home-indicator sides. */
+/* Header on top, map + right lot panel fill the remaining height. No page scroll. */
 .layout {
-  position: fixed !important;
-  inset: 0 !important;
-  display: block !important;
-  width: 100vw !important;
+  position: relative !important;
+  inset: auto !important;
+  top: auto !important;
+  left: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  display: grid !important;
+  grid-template-columns: 1fr 270px !important;
+  width: 100% !important;
   width: 100dvw !important;
-  height: 100vh !important;
-  height: 100dvh !important;
+  height: auto !important;
   min-height: 0 !important;
-  flex: none !important;
+  flex: 1 1 auto !important;
   overflow: hidden !important;
   z-index: 1;
 }
 .mapwrap {
-  position: absolute !important;
-  inset: 0 !important;
+  position: relative !important;
+  inset: auto !important;
   width: 100% !important;
   height: 100% !important;
+  min-width: 0;
+  min-height: 0;
   background: #ede8dc !important;
   touch-action: none;
   -webkit-touch-callout: none;
@@ -50,25 +58,26 @@ html, body {
   user-select: none;
 }
 
-/* Compact bar sits on top of the map; the map still runs underneath to the edges. */
+/* Compact bar spans the top; the map and lot panel sit below it. */
 header {
-  position: fixed !important;
-  top: 0;
-  left: 0;
-  right: 0;
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  right: auto !important;
   z-index: 200;
+  flex: 0 0 auto;
   height: auto !important;
   min-height: 48px;
   padding-top: env(safe-area-inset-top) !important;
   padding-left: max(12px, env(safe-area-inset-left)) !important;
   padding-right: max(12px, env(safe-area-inset-right)) !important;
   padding-bottom: 0 !important;
-  background: rgba(10, 10, 10, 0.92) !important;
+  background: #0A0A0A !important;
   display: flex !important;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  box-sizing: content-box;
+  box-sizing: border-box;
 }
 header .nav-logo {
   display: flex !important;
@@ -104,14 +113,52 @@ header .mob-menu-btn {
   display: none !important;
 }
 
-/* No lot-type legend, no desktop sidebar, no leftover marketing chrome. */
-.sb,
-.legt, .legr, .strow,
+/* Keep the right-hand lot panel. Hide the lot-type / status legends and marketing chrome. */
+.legt, .legr, .strow, .sb > .div,
 #mob-drawer, #mob-overlay, #mob-menu-btn,
 #c-acts, #mob-acts, .wa-float, #modal, #wa-float,
-#site-nav, #site-nav-spacer, #site-footer {
+#site-nav, #site-nav-spacer, #site-footer,
+.mob-sheet, #mob-sheet {
   display: none !important;
 }
+
+.sb {
+  display: flex !important;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+  background: #0A0A0A !important;
+  border-left: 1px solid rgba(200, 169, 110, 0.08);
+  padding: 12px 14px !important;
+  padding-right: max(14px, env(safe-area-inset-right)) !important;
+  padding-bottom: max(12px, env(safe-area-inset-bottom)) !important;
+  box-sizing: border-box;
+}
+.sb::-webkit-scrollbar { width: 2px; }
+.sb::-webkit-scrollbar-thumb { background: rgba(200, 169, 110, 0.2); }
+.lcard { margin-bottom: 0 !important; }
+.lcard.on { display: block !important; }
+.internal-notes {
+  max-height: none !important;
+  overflow: visible !important;
+}
+.ph { display: block; }
+
+/* Keep labels and values from running together in the narrow landscape panel. */
+.sb .lch { gap: 8px; align-items: flex-start; }
+.sb .lcid { min-width: 0; flex: 1 1 auto; font-size: 1.05rem; overflow-wrap: break-word; line-height: 1.25; }
+.sb .lctype { flex: 0 0 auto; }
+.sb .lcrow { gap: 10px; align-items: flex-start; }
+.sb .lck { flex: 0 1 auto; padding-right: 4px; }
+.sb .lcv, .sb .lcbadge { flex: 1 1 auto; text-align: right; min-width: 0; font-size: 0.95rem; overflow-wrap: break-word; word-break: normal; }
+
+
 
 /* Currency and language pills stay compact in the header. */
 .cur-toggle { margin: 0 !important; align-self: center !important; }
@@ -120,58 +167,15 @@ header .mob-menu-btn {
 button, .cur-btn, .zbtn { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
 input, select, textarea { font-size: 16px; }
 
-/* Zoom controls clear the header and the sheet peek, plus the home indicator. */
+/* Zoom controls sit on the map, clear of the right-hand lot panel. */
 .zbtns {
-  right: max(12px, env(safe-area-inset-right)) !important;
-  bottom: calc(var(--sheet-peek, 72px) + 12px + env(safe-area-inset-bottom)) !important;
+  right: 12px !important;
+  bottom: 12px !important;
   z-index: 150;
 }
 
-/* Lot details use the bottom sheet on every phone size, including landscape. */
-.mob-sheet {
-  display: flex !important;
-  position: fixed !important;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 500;
-  background: rgba(10, 10, 10, 0.97);
-  border-top: 1px solid rgba(200, 169, 110, 0.2);
-  border-radius: 16px 16px 0 0;
-  transform: translateY(calc(100% - var(--sheet-peek, 72px)));
-  transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
-  backdrop-filter: blur(16px);
-  max-height: min(70dvh, 640px);
-  overflow: hidden;
-  flex-direction: column;
-  padding-bottom: env(safe-area-inset-bottom);
-  touch-action: none;
-  overscroll-behavior: contain;
-}
-.mob-sheet.open { transform: translateY(0); }
-.mob-handle { flex-shrink: 0; padding: 10px 0 6px; display: flex; justify-content: center; cursor: pointer; }
-.mob-handle-bar { width: 36px; height: 4px; border-radius: 2px; background: rgba(200, 169, 110, 0.3); }
-.mob-peek {
-  flex-shrink: 0;
-  padding: 0 18px 10px;
-  font-size: 0.6rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: rgba(200, 169, 110, 0.5);
-  text-align: center;
-}
-.mob-sheet-body {
-  flex: 1;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  touch-action: pan-y;
-  overscroll-behavior: contain;
-  padding: 0 18px 16px;
-  max-height: none;
-}
-.mob-sheet-body::-webkit-scrollbar { display: none; }
-.mob-stats { display: flex !important; justify-content: space-between; gap: 8px; padding: 4px 0 10px; }
-.mob-stat-l { font-size: 0.5rem; letter-spacing: 0.1em; text-transform: uppercase; }
+/* Bottom sheet is unused in this app; lot details live in the right-hand panel. */
+.mob-sheet, #mob-sheet, .mob-stats { display: none !important; }
 .tt { display: none !important; }
 
 /* Status still appears as text / a badge in the detail card, not as map colours. */
@@ -274,6 +278,3 @@ input, select, textarea { font-size: 16px; }
   40% { transform: rotate(90deg); }
 }
 
-@media (orientation: landscape) {
-  .mob-sheet { max-height: min(62dvh, 280px); }
-}
