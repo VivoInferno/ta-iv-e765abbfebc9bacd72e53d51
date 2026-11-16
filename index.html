@@ -1,0 +1,1421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>
+(function(){
+  try{
+    var langs=(navigator.languages&&navigator.languages.length)?navigator.languages:[navigator.language||''];
+    var readsEnOrEs=langs.some(function(l){
+      l=(l||'').toLowerCase();
+      return l==='en'||l.indexOf('en-')===0||l==='es'||l.indexOf('es-')===0;
+    });
+    if(readsEnOrEs){
+      var m=document.createElement('meta');
+      m.name='google'; m.content='notranslate';
+      document.head.appendChild(m);
+      document.documentElement.setAttribute('translate','no');
+    }
+  }catch(e){}
+})();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TA Plan">
+<meta name="theme-color" content="#C8A96E">
+<title>Tres Aguas Internal Plan</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="stylesheet" href="internal.css">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Montserrat:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --gold:#C8A96E;--gold-l:#E8D4A8;--black:#0A0A0A;--white:#fff;--muted:#666;
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --sans:'Montserrat',sans-serif;
+  /* Homepage tokens used by the shared inquiry modal and WhatsApp button */
+  --sand:#FFF9F0;--sand-dark:#F0E8D8;--gold-light:#E8D4A8;--text-muted:#666;
+  --font-serif:'Cormorant Garamond',Georgia,serif;--font-sans:'Montserrat',sans-serif;
+  /* Tier colors - match lots-page map (fill + border share the hex; only opacity differs) */
+  --t-gp:#C8A96E;--t-g:#D4AF37;--t-s:#A8A9AD;--t-b:#CD7F32;--t-c:#FFFFFF;--t-h:#9B7EBD;
+  --bronze:#CD7F32;
+  --silver:#A8A9AD;
+}
+html,body{height:100%;overflow:hidden;font-family:var(--sans);background:#f0ebe0;color:var(--white)}
+.logo,.sb-title,.mob-drawer-title{font-variant-numeric:lining-nums;font-feature-settings:"lnum" 1}
+a.tg-opt{text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+body{display:flex;flex-direction:column}
+
+header{
+  height:62px;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  padding:0 28px;background:rgba(10,10,10,0.98);
+  border-bottom:1px solid rgba(200,169,110,0.18);z-index:100;
+  position:relative;
+}
+header .hstats{position:absolute;left:28px}
+header .header-right{position:absolute;right:28px;display:flex;align-items:center;gap:10px}
+header .mob-menu-btn{position:absolute;right:16px;top:50%;transform:translateY(-50%)}
+.logo{font-family:var(--serif);font-size:1.75rem;font-weight:300;letter-spacing:0.2em;color:var(--white);text-decoration:none}
+.logo em{color:var(--gold);font-style:italic}
+.hstats{display:flex;align-items:center;gap:22px}
+.hs{text-align:center}
+.hs-n{font-family:var(--sans);font-size:1.1rem;font-weight:300;color:var(--gold);line-height:1}
+.hs-l{font-size:0.5rem;letter-spacing:0.18em;text-transform:uppercase;color:rgba(200,169,110,0.45);margin-top:2px}
+.hdiv{width:1px;height:20px;background:rgba(200,169,110,0.2)}
+
+.toggles{display:flex;align-items:center;justify-content:center;gap:10px}
+.tg{display:flex;background:#fff;border:1px solid #fff;border-radius:3px;overflow:hidden}
+.tg-opt{padding:8px 16px;font-size:0.68rem;letter-spacing:0.12em;text-transform:uppercase;
+  color:#0A0A0A;cursor:pointer;border:none;background:#fff;
+  font-family:var(--sans);transition:all 0.18s;white-space:nowrap}
+.tg-opt.on{background:#0A0A0A;color:#fff;font-weight:500}
+
+/* Currency toggle: same pill as the shared global-nav language toggle */
+.cur-toggle{
+  display:inline-flex;align-items:center;gap:2px;padding:3px;
+  margin:0 0 16px 0;border:1px solid rgba(255,255,255,.6);border-radius:999px;
+  background:rgba(10,10,10,.30);overflow:visible;flex-shrink:0;align-self:flex-start;
+  transition:border-color .4s, background .4s;
+}
+.cur-toggle .cur-btn{
+  position:relative;display:inline-flex;align-items:center;justify-content:center;
+  min-width:44px;height:32px;padding:0 12px;border-radius:999px;border:none;cursor:pointer;
+  font-family:var(--sans);font-size:.72rem;font-weight:400;letter-spacing:.14em;
+  text-transform:uppercase;line-height:1;color:rgba(255,255,255,.88);background:transparent;
+  transition:background .25s, color .25s, box-shadow .25s;
+}
+.cur-toggle .cur-btn::after{content:"";position:absolute;top:-6px;bottom:-6px;left:-1px;right:-1px}
+.cur-toggle .cur-btn:not(.active):hover{color:#fff;background:rgba(255,255,255,.18)}
+.cur-toggle .cur-btn.active{
+  background:var(--gold);color:var(--black);font-weight:600;cursor:default;
+  box-shadow:0 1px 3px rgba(0,0,0,.25);
+}
+.cur-toggle .cur-btn:focus-visible{outline:2px solid var(--gold-light);outline-offset:3px}
+.mob-drawer .cur-toggle{margin:0 0 14px 0}
+.mob-drawer .cur-toggle .cur-btn{height:44px;min-width:52px;padding:0 14px;font-size:.78rem}
+.mob-drawer .cur-toggle .cur-btn::after{display:none}
+
+.tg-opt:hover:not(.on){background:#f0f0f0;color:#0A0A0A}
+
+
+.layout{flex:1;display:grid;grid-template-columns:1fr 270px;overflow:hidden}
+
+.mapwrap{position:relative;overflow:hidden;background:#ede8dc;cursor:grab}
+.mapwrap.grabbing{cursor:grabbing}
+#mapContainer{position:absolute;top:0;left:0;transform-origin:0 0}
+#planObj{display:block;pointer-events:none}
+#overlay{position:absolute;top:0;left:0;overflow:visible;pointer-events:none}
+#overlay polygon{pointer-events:all}
+
+.zbtns{position:absolute;bottom:14px;right:14px;display:flex;flex-direction:column;gap:3px;z-index:10}
+.zbtn{width:28px;height:28px;background:rgba(10,10,10,0.8);border:1px solid rgba(200,169,110,0.3);
+  color:var(--gold);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s}
+.zbtn:hover{background:rgba(200,169,110,0.15)}
+
+.tt{position:fixed;z-index:9000;pointer-events:none;
+  background:rgba(10,10,10,0.97);border:1px solid rgba(200,169,110,0.3);
+  padding:16px 20px;min-width:240px;
+  box-shadow:0 8px 28px rgba(0,0,0,0.7);opacity:0;transition:opacity 0.1s;backdrop-filter:blur(10px)}
+.tt.on{opacity:1}
+.tt-id{font-family:var(--sans);font-size:1.4rem;font-weight:300;letter-spacing:0.04em;margin-bottom:4px}
+.tt-tier{font-size:0.85rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:10px}
+.tt-r{display:flex;justify-content:space-between;gap:16px;margin-bottom:6px;align-items:baseline}
+.tt-k{font-size:0.82rem;letter-spacing:0.08em;text-transform:uppercase;color:rgba(236,232,222,0.95);font-weight:500}
+.tt-v{font-family:var(--sans);font-size:0.98rem;font-weight:400;color:var(--white)}
+.tt.amenity .tt-r{display:none}
+.tt-badge{font-size:0.5rem;letter-spacing:0.12em;text-transform:uppercase;
+  margin-top:6px;display:inline-block;padding:2px 7px;border-radius:10px}
+
+.sb{background:var(--black);border-left:1px solid rgba(200,169,110,0.08);
+  display:flex;flex-direction:column;overflow-y:auto;padding:20px 16px}
+.sb::-webkit-scrollbar{width:2px}
+.sb::-webkit-scrollbar-thumb{background:rgba(200,169,110,0.2)}
+.sb-title{font-family:var(--serif);font-size:1.9rem;font-weight:300;margin-bottom:3px}
+.sb-title em{font-style:italic;color:var(--gold)}
+.sb-sub{font-size:0.58rem;letter-spacing:0.22em;text-transform:uppercase;
+  color:rgba(200,169,110,0.5);margin-bottom:18px}
+.div{height:1px;background:rgba(255,255,255,0.07);margin:14px 0}
+.legt{font-size:0.6rem;letter-spacing:0.22em;text-transform:uppercase;color:rgba(200,180,140,0.7);margin-bottom:10px}
+.legr{display:flex;align-items:center;gap:9px;margin-bottom:8px;cursor:pointer;padding:4px 6px;border-radius:1px;transition:background 0.2s}
+.legr:hover,.legr.af{background:rgba(200,169,110,0.1)}
+.legr[style*="--tc"]:hover{background:color-mix(in srgb,var(--tc) 14%,transparent)}
+.legr.af[style*="--tc"]{background:color-mix(in srgb,var(--tc) 22%,transparent);box-shadow:inset 2px 0 0 var(--tc)}
+.legr:last-child{margin-top:5px;border-top:1px solid rgba(255,255,255,0.07);padding-top:7px}
+.legsw{width:13px;height:13px;border-radius:1px;flex-shrink:0}
+.legn{font-size:0.82rem;font-weight:300;flex:1;color:rgba(240,235,220,0.95)}
+.legp{font-family:var(--sans);font-size:1rem;font-weight:300;color:rgba(255,248,230,0.97);letter-spacing:0.02em}
+.strow{display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.sti{display:flex;align-items:center;gap:5px}
+.std{width:7px;height:7px;border-radius:50%}
+.stl{font-size:0.52rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
+.lcard{padding:15px;background:rgba(200,169,110,0.055);border:1px solid rgba(200,169,110,0.2);display:none;margin-bottom:12px}
+.lcard.on{display:block}
+.lch{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:11px}
+.lcid{font-family:var(--sans);font-size:1.2rem;font-weight:300;letter-spacing:0.04em}
+.lctype{font-size:0.72rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;padding:3px 8px}
+.lcrow{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
+.lcrow:last-of-type{border:none}
+.lck{font-size:0.8rem;letter-spacing:0.08em;text-transform:uppercase;color:rgba(236,232,222,0.92);font-weight:500}
+.lcv{font-family:var(--sans);font-size:1rem;font-weight:400;letter-spacing:0.01em}
+.lcbadge{font-size:0.5rem;letter-spacing:0.14em;text-transform:uppercase;padding:2px 6px;border-radius:10px}
+.lcinq{display:block;width:100%;margin-top:11px;padding:9px;background:var(--gold);
+  color:var(--black);border:none;font-family:var(--sans);font-size:0.58rem;
+  letter-spacing:0.18em;text-transform:uppercase;cursor:pointer;text-align:center;
+  text-decoration:none;transition:background 0.3s}
+.lcinq:hover{background:var(--gold-l)}
+.ph{text-align:center;padding:20px 0;font-size:0.72rem;font-weight:300;color:rgba(255,255,255,0.55);line-height:2}
+
+
+
+/* &#9472;&#9472;&#9472; MOBILE &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472; */
+@media (max-width: 768px) {
+  html,body{overflow:hidden;height:100%;height:100dvh}
+
+  /* Header collapses to logo + menu button */
+  header{
+    height:62px;padding:0 14px;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .hstats{display:none}
+  .toggles{display:none}
+
+  /* Hamburger */
+  .mob-menu-btn{
+    display:flex;flex-direction:column;justify-content:center;gap:4px;
+    width:36px;height:36px;background:none;border:none;cursor:pointer;padding:6px;
+  }
+  .mob-menu-btn span{
+    display:block;width:100%;height:1.5px;
+    background:rgba(200,169,110,0.8);border-radius:1px;transition:all 0.2s;
+  }
+
+  /* Full-screen map */
+  .layout{
+    display:block;flex:1;
+    height:calc(100dvh - 62px);
+    position:relative;overflow:hidden;
+  }
+  .mapwrap{
+    position:absolute;inset:0;
+    width:100%;height:100%;
+  }
+
+  /* Hide desktop sidebar */
+  .sb{display:none}
+
+  /* Zoom buttons - move to bottom-left, bigger tap targets */
+  .zbtns{
+    bottom:calc(var(--sheet-peek) + 16px);
+    right:12px;
+    gap:4px;
+  }
+  .zbtn{width:36px;height:36px;font-size:1.1rem}
+
+  /* Tooltip - disabled on mobile (bottom sheet replaces it) */
+  .tt{display:none !important}
+
+  /* &#9472;&#9472; Bottom Sheet &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472; */
+  .mob-sheet{
+    position:fixed;bottom:0;left:0;right:0;z-index:500;
+    background:rgba(10,10,10,0.97);
+    border-top:1px solid rgba(200,169,110,0.2);
+    border-radius:16px 16px 0 0;
+    transform:translateY(calc(100% - var(--sheet-peek)));
+    transition:transform 0.35s cubic-bezier(0.32,0.72,0,1);
+    backdrop-filter:blur(16px);
+    max-height:85dvh;
+    overflow:hidden;
+    display:flex;flex-direction:column;
+  }
+  .mob-sheet.open{transform:translateY(0)}
+
+  /* Drag handle */
+  .mob-handle{
+    flex-shrink:0;padding:10px 0 6px;
+    display:flex;justify-content:center;cursor:pointer;
+  }
+  .mob-handle-bar{
+    width:36px;height:4px;border-radius:2px;
+    background:rgba(200,169,110,0.3);
+  }
+
+  /* Sheet peek label when collapsed */
+  .mob-peek{
+    flex-shrink:0;padding:0 18px 10px;
+    font-size:0.6rem;letter-spacing:0.18em;text-transform:uppercase;
+    color:rgba(200,169,110,0.5);text-align:center;
+  }
+
+  /* Sheet content scrollable */
+  .mob-sheet-body{
+    flex:1;overflow-y:auto;padding:0 18px 32px;
+    -webkit-overflow-scrolling:touch;
+  }
+  .mob-sheet-body::-webkit-scrollbar{display:none}
+
+  /* Lot info in sheet */
+  .mob-lot-info{display:block}
+  .mob-lot-none{
+    text-align:center;padding:16px 0 8px;
+    font-size:0.65rem;font-weight:300;
+    color:rgba(255,255,255,0.2);line-height:1.8;
+  }
+
+  /* Legend in sheet */
+  .mob-legend{margin-top:18px}
+  .mob-legend-title{
+    font-size:0.55rem;letter-spacing:0.22em;text-transform:uppercase;
+    color:rgba(200,180,140,0.6);margin-bottom:10px;
+  }
+  .mob-legr{
+    display:flex;align-items:center;gap:9px;
+    padding:6px 4px;border-bottom:1px solid rgba(255,255,255,0.04);
+  }
+  .mob-legsw{width:12px;height:12px;border-radius:1px;flex-shrink:0}
+  .mob-legn{font-size:0.78rem;font-weight:300;flex:1;color:rgba(240,235,220,0.9)}
+  .mob-legp{font-family:var(--sans);font-size:0.9rem;font-weight:300;color:rgba(255,248,230,0.95)}
+
+  /* Stats bar under lot info */
+  .mob-stats{
+    display:flex;justify-content:space-around;
+    padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.06);
+    margin-bottom:14px;
+  }
+  .mob-stat{text-align:center}
+  .mob-stat-n{font-family:var(--sans);font-size:1rem;font-weight:300;color:var(--gold)}
+  .mob-stat-l{font-size:0.48rem;letter-spacing:0.16em;text-transform:uppercase;color:rgba(200,169,110,0.4)}
+
+  /* Mobile menu drawer */
+  .mob-drawer{
+    position:fixed;top:62px;right:0;bottom:0;width:240px;z-index:600;
+    background:rgba(10,10,10,0.98);border-left:1px solid rgba(200,169,110,0.12);
+    transform:translateX(100%);transition:transform 0.3s ease;
+    backdrop-filter:blur(16px);padding:20px 18px;overflow-y:auto;
+  }
+  .mob-drawer.open{transform:translateX(0)}
+  .mob-drawer-title{
+    font-family:var(--serif);font-size:1.1rem;font-weight:300;
+    margin-bottom:16px;padding-bottom:12px;
+    border-bottom:1px solid rgba(200,169,110,0.15);
+  }
+  .mob-drawer-title em{color:var(--gold);font-style:italic}
+  .mob-drawer-section{margin-bottom:18px}
+  .mob-drawer-label{
+    font-size:0.5rem;letter-spacing:0.2em;text-transform:uppercase;
+    color:rgba(200,169,110,0.4);margin-bottom:8px;
+  }
+  .mob-drawer .tg{margin-bottom:6px}
+
+  /* Overlay tap-to-close */
+  .mob-overlay{
+    display:none;position:fixed;inset:0;z-index:590;background:rgba(0,0,0,0.4);
+  }
+  .mob-overlay.on{display:block}
+}
+
+/* Hide mobile elements on desktop */
+@media (min-width:769px){
+  .mob-menu-btn,.mob-sheet,.mob-drawer,.mob-overlay{display:none !important}
+}
+
+@media (max-width: 768px) {
+  /* Bigger lang/currency buttons in drawer */
+  .mob-drawer .tg{
+    display:flex;width:100%;margin-bottom:8px;border-radius:6px;overflow:hidden;
+    border:1px solid #fff;background:#fff;
+  }
+  .mob-drawer .tg-opt{
+    flex:1;padding:18px 10px;font-size:0.9rem;letter-spacing:0.08em;
+    text-align:center;color:#0A0A0A;background:#fff;
+  }
+  .mob-drawer .tg-opt.on{
+    background:#0A0A0A;color:#fff;font-weight:500;
+  }
+
+  /* Bigger legend rows */
+  .mob-legr{padding:9px 4px;gap:12px}
+  .mob-legsw{width:16px;height:16px}
+  .mob-legn{font-size:0.9rem}
+  .mob-legp{font-size:1rem}
+  .mob-drawer-label{font-size:0.62rem;letter-spacing:0.18em;margin-bottom:10px}
+
+  /* Bigger status legend dots */
+  .mob-legr div[style*="border-radius:50%"]{
+    width:16px !important;height:16px !important;flex-shrink:0
+  }
+
+  /* Lot card values - bigger and more readable */
+  .lck{font-size:0.88rem;letter-spacing:0.08em;color:rgba(236,232,222,0.95);font-weight:500}
+  .lcv{font-size:1.08rem !important;font-weight:400}
+  .lcid{font-size:1.5rem}
+  .lctype{font-size:0.80rem;font-weight:600;padding:3px 9px}
+  .lcinq{padding:13px;font-size:0.68rem;letter-spacing:0.14em}
+
+}
+
+/* Shared site-nav on masterplan (fixed overlay + spacer; solid dark bar) */
+#site-nav-spacer{
+  height:72px;flex-shrink:0;background:#0A0A0A;
+}
+#site-nav nav#navbar{
+  background:rgba(10,10,10,0.98) !important;
+  border-bottom:1px solid rgba(200,169,110,0.18) !important;
+  padding:14px 28px !important;
+}
+#site-nav nav#navbar.scrolled{
+  background:rgba(10,10,10,0.98) !important;
+  border-bottom:1px solid rgba(200,169,110,0.18) !important;
+  padding:14px 28px !important;
+}
+/* App toolbar no longer carries the marketing logo */
+header .logo{display:none}
+header{padding-left:20px}
+
+/* Page scroll: the map app fills the first screen, the shared footer sits below it */
+html,body{height:auto;overflow-x:hidden;overflow-y:auto}
+.layout{flex:none;height:calc(100vh - 134px);height:calc(100dvh - 134px);min-height:460px}
+/* Lot actions: inquiry modal + WhatsApp */
+.lcacts{display:flex;flex-direction:column;gap:8px;margin-top:11px}
+.lcacts .lcinq{margin-top:0;display:flex;align-items:center;justify-content:center;gap:8px}
+.lcinq.lc-sec{background:transparent;color:var(--gold);border:1px solid rgba(200,169,110,0.55)}
+.lcinq.lc-sec:hover{background:rgba(200,169,110,0.12)}
+.lc-wa-ico{width:15px;height:15px;flex:none}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+  /* MODAL */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; z-index: 999;
+    background: rgba(0,0,0,0.8); backdrop-filter: blur(6px);
+    align-items: center; justify-content: center;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal {
+    background: var(--sand); padding: 60px; max-width: 540px; width: 90%;
+    position: relative; animation: fadeUp 0.4s ease;
+  }
+  .modal-close { position: absolute; top: 20px; right: 24px; background: none; border: none; cursor: pointer; font-size: 1.2rem; color: var(--text-muted); }
+  .modal-title { font-family: var(--font-serif); font-size: 2rem; font-weight: 300; margin-bottom: 14px; }
+  .modal-sub { font-size: 0.85rem; font-weight: 300; color: var(--text-muted); line-height: 1.9; margin-bottom: 32px; }
+  .modal-form { display: flex; flex-direction: column; gap: 12px; }
+  .modal-input {
+    background: var(--white); border: 1px solid rgba(0,0,0,0.12); padding: 14px 18px;
+    font-family: var(--font-sans); font-weight: 300; font-size: 0.85rem; color: var(--black);
+    outline: none; transition: border-color 0.3s;
+  }
+  .modal-input:focus { border-color: var(--gold); }
+  .modal-btn {
+    background: var(--black); color: var(--white); border: none; cursor: pointer; padding: 16px;
+    font-family: var(--font-sans); font-weight: 300; font-size: 0.68rem;
+    letter-spacing: 0.25em; text-transform: uppercase; transition: background 0.3s; margin-top: 8px;
+  }
+  .modal-btn:hover { background: var(--gold); }
+  .modal-note{font-size:.7rem;font-weight:300;line-height:1.7;color:var(--text-muted);margin-top:8px;}
+  .modal-note a{color:var(--gold);text-decoration:none;border-bottom:1px solid var(--gold-light);}
+  /* Masterplan body text is white; the modal keeps the homepage dark-on-sand look */
+  .modal-overlay .modal{color:var(--black);max-height:92vh;overflow-y:auto}
+  textarea.modal-input{resize:vertical;min-height:84px;line-height:1.6}
+  @media (max-width:768px){
+    .modal { padding: 40px 22px; }
+    .modal-title { font-size: 1.5rem; }
+  }
+.wa-float{position:fixed;right:max(18px,env(safe-area-inset-right));bottom:max(18px,env(safe-area-inset-bottom));z-index:990;display:flex;align-items:center;gap:10px;height:56px;padding:0 20px 0 16px;border-radius:28px;background:#25D366;color:#fff;text-decoration:none;font-family:var(--font-sans,'Montserrat',sans-serif);font-size:14px;font-weight:600;letter-spacing:.01em;box-shadow:0 6px 20px rgba(0,0,0,.22);transition:padding .35s ease,gap .35s ease,opacity .25s ease,transform .25s ease}
+  .wa-float:hover{background:#1EBE5A}
+  .wa-float:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+  .wa-float-ico{width:26px;height:26px;flex:none}
+  .wa-float-label{white-space:nowrap;overflow:hidden;max-width:180px;transition:max-width .35s ease,opacity .25s ease}
+  .wa-float.is-collapsed{padding:0 15px;gap:0}
+  .wa-float.is-collapsed .wa-float-label{max-width:0;opacity:0}
+  .wa-float.is-hidden{opacity:0;transform:translateY(16px);pointer-events:none}
+  @media (max-width:560px){.wa-float{right:14px;bottom:14px;height:52px}.wa-float.is-collapsed{padding:0 13px}}
+  @media (prefers-reduced-motion:reduce){.wa-float,.wa-float-label{transition:none}}
+/* Masterplan: float on the left so it never covers the lot panel (right sidebar) or the zoom buttons */
+.wa-float{left:max(18px,env(safe-area-inset-left));right:auto}
+@media (max-width:768px){
+  html,body{height:auto;overflow-x:hidden;overflow-y:auto}
+  .layout{height:calc(100vh - 134px);height:calc(100dvh - 134px);min-height:0}
+  /* Map and sheet gestures stay inside the app; page scroll reaches the footer */
+  .mapwrap{touch-action:none}
+  .mob-sheet{touch-action:none}
+  .mob-sheet-body{touch-action:pan-y;overscroll-behavior:contain}
+  .mob-sheet.is-off{transform:translateY(100%)}
+  .wa-float{left:14px;right:auto;bottom:calc(var(--sheet-peek) + 16px)}
+}
+
+</style>
+</head>
+<body>
+<div id="ta-boot">Loading plan</div>
+<h1 class="sr-only">Tres Aguas Internal Plan</h1>
+<header>
+  <span class="logo">Tres <em>Aguas</em></span>
+  <div class="hstats" id="hstats">
+    <div class="hs"><div class="hs-n" id="h-av">-</div><div class="hs-l" id="lbl-av">Available</div></div>
+    <div class="hdiv"></div>
+    <div class="hs"><div class="hs-n" id="h-pe">-</div><div class="hs-l" id="lbl-pe">Pending</div></div>
+    <div class="hdiv"></div>
+    <div class="hs"><div class="hs-n" id="h-mp">-</div><div class="hs-l" id="lbl-mp">Paying</div></div>
+    <div class="hdiv"></div>
+    <div class="hs"><div class="hs-n" id="h-so">-</div><div class="hs-l" id="lbl-so">Sold</div></div>
+    <div class="hdiv"></div>
+    <div class="hs"><div class="hs-n" id="h-tt">-</div><div class="hs-l" id="lbl-tt">Total Lots</div></div>
+  </div>
+  <div class="header-right">
+    <div class="cur-toggle lang-toggle" id="tg-lang" role="group" aria-label="Language">
+      <button type="button" class="cur-btn active" onclick="setLang('en')" id="lo-en" aria-pressed="true">EN</button>
+      <button type="button" class="cur-btn" onclick="setLang('es')" id="lo-es" aria-pressed="false">ES</button>
+    </div>
+  </div>
+  <button class="mob-menu-btn" id="mob-menu-btn" onclick="toggleDrawer()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+<div class="layout">
+<div class="mapwrap" id="mapwrap">
+  <div id="mapContainer">
+    <img id="planObj" 
+      src="map.webp"
+      alt="Tres Aguas interactive masterplan map showing the oceanfront, laguna and river lot layout on Agua Dulce beach near Puerto Escondido, Oaxaca"
+      width="2592" height="1728"
+      style="display:block;pointer-events:none;position:absolute;transform-origin:0 0;transform:translate(0px, 0px) scale(1)"
+      onload="if(typeof fitMap==='function') fitMap()">
+    <svg id="overlay" width="2592" height="1728"
+      viewBox="0 0 2592 1728"
+      xmlns="http://www.w3.org/2000/svg">
+      <g id="lotsG"></g>
+    </svg>
+  </div>
+  <div class="zbtns">
+    <button class="zbtn" onclick="zm(1.2)" aria-label="Zoom in">+</button>
+    <button class="zbtn" onclick="zm(0.83)" aria-label="Zoom out">&#8722;</button>
+    <button class="zbtn" onclick="zr()" aria-label="Reset view" style="font-size:0.65rem">&#8857;</button>
+  </div>
+</div>
+
+<div class="sb">
+  <div class="cur-toggle" id="tg-cur" role="group" aria-label="Currency">
+    <button type="button" class="cur-btn active" onclick="setCur('MXN')" id="co-MXN" aria-pressed="true">MXN</button>
+    <button type="button" class="cur-btn" onclick="setCur('USD')" id="co-USD" aria-pressed="false">USD</button>
+    <button type="button" class="cur-btn" onclick="setCur('CAD')" id="co-CAD" aria-pressed="false">CAD</button>
+  </div>
+
+  <div class="legt" id="lbl-lots">Lot Type</div>
+  <div class="legr" id="lr-GP" style="--tc:#C8A96E" onclick="filt('GP')">
+    <div class="legsw" style="background:#C8A96E;border:1px solid #C8A96E"></div>
+    <span class="legn">Gold Plus</span>
+    <span class="legp" id="lp-GP">$13,000/m&#178;</span>
+  </div>
+  <div class="legr" id="lr-G" style="--tc:#D4AF37" onclick="filt('G')">
+    <div class="legsw" style="background:#D4AF37;border:1px solid #D4AF37"></div>
+    <span class="legn">Gold</span>
+    <span class="legp" id="lp-G">$9,000/m&#178;</span>
+  </div>
+  <div class="legr" id="lr-S" style="--tc:#A8A9AD" onclick="filt('S')">
+    <div class="legsw" style="background:#A8A9AD;border:1px solid #A8A9AD"></div>
+    <span class="legn">Silver</span>
+    <span class="legp" id="lp-S">$5,000/m&#178;</span>
+  </div>
+  <div class="legr" id="lr-B" style="--tc:#CD7F32" onclick="filt('B')">
+    <div class="legsw" style="background:#CD7F32;border:1px solid #CD7F32"></div>
+    <span class="legn">Bronze</span>
+    <span class="legp" id="lp-B">$3,000/m&#178;</span>
+  </div>
+  <div class="legr" id="lr-C" style="--tc:#FFFFFF" onclick="filt('C')">
+    <div class="legsw" style="background:#FFFFFF;border:1px solid #FFFFFF"></div>
+    <span class="legn">Commercial</span>
+    <span class="legp" id="lp-C">$5,000/m&#178;</span>
+  </div>
+  <div class="legr" id="lr-H" style="--tc:#9B7EBD" onclick="filt('H')">
+    <div class="legsw" style="background:#9B7EBD;border:1px solid #9B7EBD"></div>
+    <span class="legn">Hotel</span>
+    <span class="legp" id="lp-H">Contact Us</span>
+  </div>
+  <div class="legr" id="lr-BC" style="--tc:#d2a152" onclick="filt('BC')">
+    <div class="legsw" style="background:#d2a152;border:1px solid #d2a152"></div>
+    <span class="legn">Beach Club</span>
+    <span class="legp" id="lp-BC">-</span>
+  </div>
+  <div class="legr" onclick="filt(null)">
+    <span class="legn" style="font-size:0.58rem;color:var(--muted)">Show all</span>
+  </div>
+  <div class="div"></div>
+  <div class="strow">
+    <div class="sti"><div class="std" style="background:rgba(180,180,180,0.62);border:1px solid rgba(200,200,200,0.6)"></div><span class="stl" data-i18n="avail">Available</span></div>
+    <div class="sti"><div class="std" style="background:#D4A017;border:1px solid #D4A017"></div><span class="stl" data-i18n="pending">Pending</span></div>
+    <div class="sti"><div class="std" style="background:#3D8A9C;border:1px solid #3D8A9C"></div><span class="stl" data-i18n="making_payment">Making Payment</span></div>
+    <div class="sti"><div class="std" style="background:#8B1A1A;border:1px solid #8B1A1A"></div><span class="stl" data-i18n="sold">Sold</span></div>
+    <div class="sti"><div class="std" style="background:#6B4C9A;border:1px solid #6B4C9A"></div><span class="stl" data-i18n="split">Split</span></div>
+  </div>
+  <div class="div"></div>
+  <div class="lcard" id="lcard">
+    <div class="lch">
+      <div class="lcid" id="c-id"></div>
+      <div class="lctype" id="c-type"></div>
+    </div>
+    <div class="lcrow"><span class="lck" data-i18n="cat">Category</span><span class="lcv" id="c-cat">-</span></div>
+    <div class="lcrow"><span class="lck" data-i18n="area">Area</span><span class="lcv" id="c-sz">-</span></div>
+    <div class="lcrow"><span class="lck" data-i18n="pricepm">Price / m&#178;</span><span class="lcv" id="c-pm">-</span></div>
+    <div class="lcrow"><span class="lck" data-i18n="total">Total Price</span><span class="lcv" id="c-tot">-</span></div>
+    <div class="lcrow" style="border:none"><span class="lck">Status</span><span class="lcbadge" id="c-badge"></span></div>
+    <div class="internal-rows" id="c-internal"></div>
+    <div class="lcacts" id="c-acts">
+      <button type="button" class="lcinq" id="c-inq" onclick="openLotInquiry()">Inquire About This Lot &#8594;</button>
+      <a class="lcinq lc-sec" id="c-wa" href="https://wa.me/529541399339" target="_blank" rel="noopener" data-cta="lot-whatsapp" data-magnet="none"><svg class="lc-wa-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#wa-glyph"/></svg><span>Chat on WhatsApp</span></a>
+    </div>
+  </div>
+  <div class="ph" id="ph">Click a lot<br>to see details</div>
+</div>
+</div>
+
+<!-- &#9472;&#9472; Mobile Bottom Sheet &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472; -->
+<div class="mob-sheet" id="mob-sheet">
+  <div class="mob-handle" id="mob-handle" onclick="toggleSheet()">
+    <div class="mob-handle-bar"></div>
+  </div>
+  <div class="mob-peek" id="mob-peek">Tap a lot &#183; Swipe up for the menu</div>
+  <div class="mob-sheet-body">
+    <div class="mob-stats" id="mob-stats">
+      <div class="mob-stat"><div class="mob-stat-n" id="mh-av">-</div><div class="mob-stat-l" id="mlbl-av">Available</div></div>
+      <div class="mob-stat"><div class="mob-stat-n" id="mh-pe">-</div><div class="mob-stat-l" id="mlbl-pe">Pending</div></div>
+      <div class="mob-stat"><div class="mob-stat-n" id="mh-mp">-</div><div class="mob-stat-l" id="mlbl-mp">Paying</div></div>
+      <div class="mob-stat"><div class="mob-stat-n" id="mh-so">-</div><div class="mob-stat-l" id="mlbl-so">Sold</div></div>
+      <div class="mob-stat"><div class="mob-stat-n" id="mh-tt">-</div><div class="mob-stat-l" id="mlbl-tt">Total</div></div>
+    </div>
+    <div id="mob-lot-none" class="mob-lot-none">Tap a lot to see details</div>
+    <div class="lcard" id="mob-lcard">
+      <div class="lch">
+        <div class="lcid" id="mob-c-id"></div>
+        <div class="lctype" id="mob-c-type"></div>
+      </div>
+      <div class="lcrow"><span class="lck" data-i18n="cat">Category</span><span class="lcv" id="mob-c-cat">-</span></div>
+      <div class="lcrow"><span class="lck" data-i18n="area">Area</span><span class="lcv" id="mob-c-sz">-</span></div>
+      <div class="lcrow"><span class="lck" data-i18n="pricepm">Price / m&#178;</span><span class="lcv" id="mob-c-pm">-</span></div>
+      <div class="lcrow" style="border:none"><span class="lck" data-i18n="total">Total Price</span><span class="lcv" id="mob-c-tot">-</span></div>
+      <div style="margin-top:8px"><span class="lcbadge" id="mob-c-badge"></span></div>
+      <div class="internal-rows" id="mob-c-internal"></div>
+      <div class="lcacts" id="mob-acts">
+        <button type="button" class="lcinq" id="mob-lcinq" onclick="openLotInquiry()">Inquire About This Lot &#8594;</button>
+        <a class="lcinq lc-sec" id="mob-wa" href="https://wa.me/529541399339" target="_blank" rel="noopener" data-cta="lot-whatsapp" data-magnet="none"><svg class="lc-wa-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#wa-glyph"/></svg><span>Chat on WhatsApp</span></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- &#9472;&#9472; Mobile Drawer &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472; -->
+<div class="mob-overlay" id="mob-overlay" onclick="closeDrawer()"></div>
+<div class="mob-drawer" id="mob-drawer">
+  <div class="mob-drawer-title">Tres <em>Aguas</em></div>
+  <div class="mob-drawer-section">
+  <div class="cur-toggle" id="mob-tg-cur" role="group" aria-label="Currency">
+    <button type="button" class="cur-btn active" onclick="setCur('MXN')" id="mob-co-MXN" aria-pressed="true">MXN</button>
+    <button type="button" class="cur-btn" onclick="setCur('USD')" id="mob-co-USD" aria-pressed="false">USD</button>
+    <button type="button" class="cur-btn" onclick="setCur('CAD')" id="mob-co-CAD" aria-pressed="false">CAD</button>
+  </div>
+  </div>
+  <div class="mob-drawer-section">
+    <div class="mob-drawer-label" id="mob-lbl-lots">Lot Type</div>
+    <div class="mob-legr"><div class="mob-legsw" style="background:#C8A96E;border:1px solid #C8A96E"></div><span class="mob-legn">Gold Plus</span><span class="mob-legp" id="mob-lp-GP">$13,000/m&#178;</span></div>
+    <div class="mob-legr"><div class="mob-legsw" style="background:#D4AF37;border:1px solid #D4AF37"></div><span class="mob-legn">Gold</span><span class="mob-legp" id="mob-lp-G">$9,000/m&#178;</span></div>
+    <div class="mob-legr"><div class="mob-legsw" style="background:#A8A9AD;border:1px solid #A8A9AD"></div><span class="mob-legn">Silver</span><span class="mob-legp" id="mob-lp-S">$5,000/m&#178;</span></div>
+    <div class="mob-legr"><div class="mob-legsw" style="background:#CD7F32;border:1px solid #CD7F32"></div><span class="mob-legn">Bronze</span><span class="mob-legp" id="mob-lp-B">$3,000/m&#178;</span></div>
+    <div class="mob-legr"><div class="mob-legsw" style="background:#FFFFFF;border:1px solid #FFFFFF"></div><span class="mob-legn">Commercial</span><span class="mob-legp" id="mob-lp-C">$5,000/m&#178;</span></div>
+    <div class="mob-legr"><div class="mob-legsw" style="background:#9B7EBD;border:1px solid #9B7EBD"></div><span class="mob-legn">Hotel</span><span class="mob-legp" id="mob-lp-H">Contact Us</span></div>
+    <div style="margin-top:12px">
+      <div class="mob-drawer-label">Status</div>
+      <div class="mob-legr"><div style="width:12px;height:12px;border-radius:50%;background:rgba(180,180,180,0.62);border:1px solid rgba(200,200,200,0.6);flex-shrink:0"></div><span class="mob-legn" data-i18n="avail">Available</span></div>
+      <div class="mob-legr"><div style="width:12px;height:12px;border-radius:50%;background:#D4A017;border:1px solid #D4A017;flex-shrink:0"></div><span class="mob-legn" data-i18n="pending">Pending</span></div>
+      <div class="mob-legr"><div style="width:12px;height:12px;border-radius:50%;background:#3D8A9C;border:1px solid #3D8A9C;flex-shrink:0"></div><span class="mob-legn" data-i18n="making_payment">Making Payment</span></div>
+      <div class="mob-legr"><div style="width:12px;height:12px;border-radius:50%;background:#8B1A1A;border:1px solid #8B1A1A;flex-shrink:0"></div><span class="mob-legn" data-i18n="sold">Sold</span></div>
+      <div class="mob-legr"><div style="width:12px;height:12px;border-radius:50%;background:#6B4C9A;border:1px solid #6B4C9A;flex-shrink:0"></div><span class="mob-legn" data-i18n="split">Split</span></div>
+    </div>
+    <div class="cur-toggle lang-toggle" id="mob-tg-lang" role="group" aria-label="Language" style="margin-top:16px">
+      <button type="button" class="cur-btn active" onclick="setLang('en')" id="mob-lo-en" aria-pressed="true">EN</button>
+      <button type="button" class="cur-btn" onclick="setLang('es')" id="mob-lo-es" aria-pressed="false">ES</button>
+    </div>
+  </div>
+</div>
+
+<div class="tt" id="tt">
+  <div class="tt-id" id="t-id"></div>
+  <div class="tt-tier" id="t-tier"></div>
+  <div class="tt-r"><span class="tt-k" id="ttk-st">Status</span><span class="tt-v" id="t-st"></span></div>
+  <div class="tt-r"><span class="tt-k" id="ttk-m2">Area</span><span class="tt-v" id="t-m2"></span></div>
+  <div class="tt-r"><span class="tt-k" id="ttk-pm">Price/m&#178;</span><span class="tt-v" id="t-p2"></span></div>
+  <div class="tt-r"><span class="tt-k" id="ttk-tot">Total</span><span class="tt-v" id="t-tot"></span></div>
+
+<script>
+let SHAPES = [];
+
+
+// \u2500\u2500\u2500 i18n & Currency \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+const I18N = {
+  es: {
+    avail:'Disponible', sold:'Vendido',
+    shapeId:'Shape ID', cat:'Categor\u00eda', area:'Superficie',
+    pricepm:'Precio / m\u00b2', total:'Precio Total',
+    lotType:'Tipo de Lote', consult:'Consultar',
+    unassigned:'(sin asignar)', noDetail:'Haz clic en un lote para ver sus detalles',
+    inquiry:'Consultar Este Lote \u2192',
+    statAv:'Disponible', statSo:'Vendido', statTot:'Total Lotes',
+    sports:'Canchas deportivas', services:'Servicios del desarrollo', beachClub:'Club de playa',
+    ttSt:'Estado', ttM2:'Superficie', ttPm:'Precio/m\u00b2', ttTot:'Total',
+    showAll:'Mostrar todos'
+  },
+  en: {
+    avail:'Available', sold:'Sold',
+    shapeId:'Shape ID', cat:'Category', area:'Area',
+    pricepm:'Price / m\u00b2', total:'Total Price',
+    lotType:'Lot Type', consult:'Contact Us',
+    unassigned:'(unassigned)', noDetail:'Click a lot to see details',
+    inquiry:'Inquire About This Lot \u2192',
+    statAv:'Available', statSo:'Sold', statTot:'Total Lots',
+    sports:'Sports Courts', services:'Development Services', beachClub:'Beach Club',
+    ttSt:'Status', ttM2:'Area', ttPm:'Price/m\u00b2', ttTot:'Total',
+    showAll:'Show all'
+  }
+};
+
+let curLang = 'en';
+let curCur = 'MXN';
+let fxRates = {USD: null, CAD: null};
+let fxFetched = false;
+
+async function fetchFX() {
+  if(fxFetched) return;
+  fxFetched = true;
+  try {
+    // Use exchangerate-api (free, no key needed for basic)
+    const r = await fetch('https://api.exchangerate-api.com/v4/latest/MXN');
+    if(r.ok) {
+      const d = await r.json();
+      fxRates.USD = d.rates['USD'];
+      fxRates.CAD = d.rates['CAD'];
+    }
+  } catch(e) {
+    // Fetch failed: handled by the backup-rate fallback below
+  }
+  // Fallback whenever the live fetch fails (network error, non-ok response, or missing USD/CAD values)
+  // Backup rates (MXN->USD/CAD). Refresh to the current market rate every time the plan is edited. Last updated 2026-11-13 (exchangerate-api.com/v4/latest/MXN: USD 0.0539, CAD 0.0768).
+  if(!(Number(fxRates.USD) > 0)) fxRates.USD = 0.0539;
+  if(!(Number(fxRates.CAD) > 0)) fxRates.CAD = 0.0768;
+}
+
+// Round to nearest $900
+function roundTo900(n) {
+  return Math.round(n / 900) * 900;
+}
+
+function convertPrice(mxn, perM2) {
+  if(!mxn) return null;
+  if(curCur === 'MXN') return mxn;
+  const rate = fxRates[curCur];
+  if(!rate) return mxn; // fallback to MXN if rates not loaded
+  const converted = mxn * rate;
+  return perM2 ? Math.round(converted) : roundTo900(converted);
+}
+
+function fmtPrice(mxn, perM2) {
+  if(!mxn) return t('consult');
+  const val = convertPrice(mxn, perM2);
+  const sym = '$';
+  return sym + Number(val).toLocaleString() + ' ' + curCur + (perM2 ? '/m\u00b2' : '');
+}
+
+function t(key) { return I18N[curLang][key] || key; }
+
+function setLang(lang) {
+  curLang = lang;
+  document.querySelectorAll('#lo-es,#lo-en').forEach(b => b.classList.remove('on','active'));
+  const el = document.getElementById('lo-'+lang);
+  if(el) el.classList.add('on','active');
+  if(typeof syncMobLang === 'function') syncMobLang(lang);
+  applyI18n();
+  render();
+  updateStats();
+}
+
+function setCur(cur) {
+  curCur = cur;
+  ['MXN','USD','CAD'].forEach(c => {
+    const on = c === cur;
+    ['co-'+c, 'mob-co-'+c].forEach(id => {
+      const b = document.getElementById(id);
+      if(!b) return;
+      b.classList.toggle('active', on);
+      b.classList.toggle('on', on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+  });
+  syncMobCur(cur);
+  if(cur !== 'MXN') fetchFX().then(() => { refreshPriceDisplays(); render(); });
+  else { refreshPriceDisplays(); render(); }
+}
+
+function refreshPriceDisplays() {
+  ['GP','G','S','B','C','H'].forEach(tier => {
+    const el = document.getElementById('lp-'+tier);
+    if(!el) return;
+    const p = prices[tier];
+    el.textContent = p ? fmtPrice(p, true) : t('consult');
+  });
+  // Re-render sidebar card if open
+  if(selId) {
+    const shape = SHAPES.find(s => s.id === selId);
+    if(shape) selectShape(shape);
+  }
+}
+
+function applyI18n() {
+  const L = I18N[curLang];
+  // Header stats labels
+  const lbls = {av:'statAv', so:'statSo', tt:'statTot'};
+  Object.entries(lbls).forEach(([id,key]) => {
+    const el = document.getElementById('lbl-'+id);
+    if(el) el.textContent = L[key];
+  });
+  // Sidebar
+  const lotLbl = document.getElementById('lbl-lots');
+  if(lotLbl) lotLbl.textContent = L.lotType;
+  // Sidebar showAll
+  document.querySelectorAll('.legr').forEach(r => {
+    const n = r.querySelector('.legn');
+    if(n && (n.textContent === 'Mostrar todos' || n.textContent === 'Show all'))
+      n.textContent = L.showAll;
+  });
+  // Status row
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if(L[key]) el.textContent = L[key];
+  });
+  // Tooltip keys
+  const ttMap = {st:'ttSt', m2:'ttM2', pm:'ttPm', tot:'ttTot'};
+  Object.entries(ttMap).forEach(([id,key]) => {
+    const el = document.getElementById('ttk-'+id);
+    if(el) el.textContent = L[key];
+  });
+  // Placeholder text
+  const ph = document.getElementById('ph');
+  if(ph) ph.textContent = L.noDetail;
+  // Inquiry button
+  const inq = document.getElementById('c-inq');
+  if(inq) inq.textContent = L.inquiry;
+  // SMAP update
+  SMAP.available = L.avail;
+  SMAP.sold = L.sold;
+}
+// \u2500\u2500\u2500 End i18n & Currency \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+const TNAMES = {GP:'Gold Plus',G:'Gold',S:'Silver',B:'Bronze',C:'Commercial',H:'Hotel',BC:'Beach Club',SC:'Sports Courts',DS:'Development Services',LW:'Laguna West'};
+const TCOLORS = {GP:'#C8A96E',G:'#D4AF37',S:'#A8A9AD',B:'#CD7F32',C:'#FFFFFF',H:'#9B7EBD',BC:'#d2a152',SC:'#6B8F71',DS:'#7A7E85',LW:'#5B7C99'};
+// Map SVG tier to our lot type codes
+const TIER_TYPE = {B:'B',S:'S',G:'G',GP:'GP',C:'C',H:'H',BC:'BC',SC:'SC',DS:'DS',LW:'LW'};
+const TIER_LABEL = {B:'Bronze',S:'Silver',G:'Gold',GP:'Gold Plus',C:'Commercial',H:'Hotel',BC:'Beach Club',SC:'Sports Courts',DS:'Development Services',LW:'Laguna West'};
+let SMAP = {available:'Available',sold:'Sold',pending:'Pending',making_payment:'Making Payment',split:'Split ownership'};
+
+let prices = {GP:13000,G:9000,S:5000,B:3000,C:5000,H:null};
+let activeFilt = null;
+let selId = null;
+
+
+// lotData: keyed by shape id. Official Airtable record counts (2026-11-13):
+const RECORD_STATS = {available:924, sold:38, total:962};
+let lotData = {};
+SHAPES.forEach(s => {
+  if(s.lot_id) {
+    lotData[s.id] = {
+      type: TIER_TYPE[s.tier] || s.tier || 'B',
+      size: s.size,
+      status: s.status || 'available',
+      lot_id: s.lot_id,
+      list_price: s.list_price || 0,
+      perm2: s.perm2 || 0,
+      amenity: !!s.amenity
+    };
+  }
+});
+
+function hexA(hex, a) {
+  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+function ptsStr(pts) { return pts.map(p=>p.join(',')).join(' '); }
+
+function tierColor(tier){return TCOLORS[tier]||TCOLORS.BC;}
+
+function render() {
+  const g = document.getElementById('lotsG');
+  g.innerHTML = '';
+
+  const sorted = [...SHAPES].sort((a, b) => (a.id === selId ? 1 : b.id === selId ? -1 : 0));
+
+  sorted.forEach(shape => {
+    const isNamed = !!(shape.lot_id);
+    const data = isNamed ? lotData[shape.id] : null;
+    const type = data ? data.type : TIER_TYPE[shape.tier];
+
+    if(activeFilt && type !== activeFilt) return;
+
+    const c = isNamed && data ? TCOLORS[data.type] : tierColor(shape.tier);
+    const status = data ? data.status : 'available';
+    const isDashedAmenity = !!(data && data.amenity && (shape.tier === 'SC' || shape.tier === 'DS'));
+    const isAmenity = !!(data && data.amenity);
+    const baseA = isAmenity ? 0.28 : 0.62;
+    const fa = (status==='sold' && !isAmenity) ? 0.0 : baseA;
+
+    const poly = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+    poly.setAttribute('points', ptsStr(shape.pts));
+    poly.setAttribute('fill', fa > 0 ? hexA(c, fa) : 'none');
+
+    if(shape.id === selId) {
+      poly.setAttribute('stroke', c);
+      poly.setAttribute('stroke-width','3');
+      poly.setAttribute('fill', c);
+      poly.setAttribute('fill-opacity','0.88');
+      const animFill = document.createElementNS('http://www.w3.org/2000/svg','animate');
+      animFill.setAttribute('attributeName','fill-opacity');
+      animFill.setAttribute('values','0.88;1;0.88');
+      animFill.setAttribute('dur','1.4s');
+      animFill.setAttribute('repeatCount','indefinite');
+      poly.appendChild(animFill);
+      const animStroke = document.createElementNS('http://www.w3.org/2000/svg','animate');
+      animStroke.setAttribute('attributeName','stroke-opacity');
+      animStroke.setAttribute('values','0.8;1;0.8');
+      animStroke.setAttribute('dur','1.4s');
+      animStroke.setAttribute('repeatCount','indefinite');
+      poly.appendChild(animStroke);
+      const animWidth = document.createElementNS('http://www.w3.org/2000/svg','animate');
+      animWidth.setAttribute('attributeName','stroke-width');
+      animWidth.setAttribute('values','3;5;3');
+      animWidth.setAttribute('dur','1.4s');
+      animWidth.setAttribute('repeatCount','indefinite');
+      poly.appendChild(animWidth);
+    } else if(isDashedAmenity) {
+      poly.setAttribute('stroke', hexA(c, 0.9));
+      poly.setAttribute('stroke-width','2');
+      poly.setAttribute('stroke-dasharray','3 3');
+    } else if(status === 'sold') {
+      poly.setAttribute('stroke', hexA(c, 0.35));
+      poly.setAttribute('stroke-width','1.5');
+    } else {
+      poly.setAttribute('stroke', hexA(c, 0.85));
+      poly.setAttribute('stroke-width','1.8');
+    }
+
+    poly.style.cursor = 'pointer';
+    poly.style.transition = 'fill 0.15s';
+    const isSel = shape.id === selId;
+    const restStroke = poly.getAttribute('stroke');
+    poly.addEventListener('mouseenter', e => {
+      if(!isSel){
+        poly.setAttribute('fill', hexA(c, (status==='sold' && !isAmenity)?0.15:isAmenity?0.45:0.82));
+        if(status==='available') poly.setAttribute('stroke', c);
+      }
+      showTT(e, shape);
+    });
+    poly.addEventListener('mousemove', moveTT);
+    poly.addEventListener('mouseleave', () => {
+      if(!isSel){ poly.setAttribute('fill', fa > 0 ? hexA(c, fa) : 'none'); poly.setAttribute('stroke', restStroke); }
+      hideTT();
+    });
+    poly.addEventListener('click', () => selectShape(shape));
+    g.appendChild(poly);
+  });
+}
+
+function updateStats() {
+  // Header counts sale lots only: Available or Sold. Amenity parcels (M-16, M-19, M-44) are visible but not counted. M-18 is not on the map.
+  const counted = SHAPES.filter(s => s.lot_id && !(lotData[s.id] && lotData[s.id].amenity));
+  const st = s => lotData[s.id] && lotData[s.id].status;
+  document.getElementById('h-av').textContent = counted.filter(s => st(s)==='available').length;
+  document.getElementById('h-so').textContent = counted.filter(s => st(s)==='sold').length;
+  document.getElementById('h-tt').textContent = counted.length;
+  updateMobStats();
+}
+
+const TTel = document.getElementById('tt');
+function showTT(e, shape) {
+  const data = lotData[shape.id];
+  const isBC = shape.tier === 'BC' || !!(data && data.amenity);
+  const isNamed = !!(shape.lot_id);
+  document.getElementById('t-id').style.display = '';
+  document.getElementById('t-tier').style.display = '';
+  document.getElementById('tt').classList.toggle('amenity', !!isBC);
+  document.querySelectorAll('#tt .tt-r').forEach(r => { r.style.display = isBC ? 'none' : ''; });
+
+  document.getElementById('t-id').textContent = isNamed ? shape.lot_id : t('unassigned');
+  const tl = document.getElementById('t-tier');
+  tl.textContent = TIER_LABEL[shape.tier] || shape.tier;
+  tl.style.color = tierColor(shape.tier);
+  document.getElementById('t-st').textContent = data ? SMAP[data.status] : '-';
+  const sz = data ? data.size : (shape.size || null);
+  document.getElementById('t-m2').textContent = sz ? Number(sz).toLocaleString()+' m\u00b2' : '-';
+  const isSold = data && data.status === 'sold';
+  const hideAmt = isSold || !!(data && data.amenity);
+  const showPrice = !hideAmt;
+  const p = showPrice ? (data && data.perm2 ? data.perm2 : (data ? prices[data.type] : null)) : null;
+  document.getElementById('t-p2').textContent = isSold ? '-' : (p ? fmtPrice(p, true) : '-');
+  const tot = (showPrice && data && data.list_price) ? Math.round(data.list_price) : ((p && data && data.size) ? Math.round(p*data.size) : null);
+  document.getElementById('t-tot').textContent = isSold ? '-' : (tot ? fmtPrice(tot, false) : '-');
+  moveTT(e); TTel.classList.add('on');
+}
+function moveTT(e) {
+  const pad = 16;
+  const tw = TTel.offsetWidth || 260;
+  const th = TTel.offsetHeight || 220;
+  let x = e.clientX + 13;
+  let y = e.clientY - 13;
+  if (x + tw + pad > window.innerWidth) x = e.clientX - tw - 12;
+  if (y + th + pad > window.innerHeight) y = e.clientY - th - 12;
+  if (x < pad) x = pad;
+  if (y < pad) y = pad;
+  TTel.style.left = x + 'px';
+  TTel.style.top = y + 'px';
+}
+function hideTT() { TTel.classList.remove('on'); }
+
+function selectShape(shape) {
+  selId = shape.id;
+  setLotCTA(shape);
+  const data = lotData[shape.id];
+  const isNamed = !!(shape.lot_id);
+  const isBC = shape.tier === 'BC' || !!(data && data.amenity);
+  const c = isNamed && data ? TCOLORS[data.type] : tierColor(shape.tier);
+
+  if(isBC) {
+    const sz = data ? data.size : (shape.size || null);
+    document.getElementById('c-id').textContent = isNamed ? shape.lot_id : t('unassigned');
+    const ct = document.getElementById('c-type');
+    ct.textContent = TIER_LABEL[shape.tier] || 'Beach Club';
+    ct.style.cssText = `background:${hexA(c,0.12)};color:${c};border:1px solid ${hexA(c,0.35)}`;
+    document.getElementById('c-cat').parentElement.style.display = 'none';
+    document.getElementById('c-pm').parentElement.style.display = 'none';
+    document.getElementById('c-tot').parentElement.style.display = 'none';
+    document.getElementById('c-badge').parentElement.style.display = 'none';
+    document.getElementById('c-sz').parentElement.style.display = 'none';
+    const _lcinq=document.getElementById('c-acts');
+    if(_lcinq) _lcinq.style.display='';
+    const mobInq=document.getElementById('mob-acts');
+    if(mobInq) mobInq.style.display='';
+    document.getElementById('lcard').classList.add('on','amenity');
+    document.getElementById('ph').style.display = 'none';
+    mobSelectShape(shape);
+    render();
+    return;
+  }
+  document.getElementById('c-cat').parentElement.style.display = '';
+  document.getElementById('c-pm').parentElement.style.display = '';
+  document.getElementById('c-tot').parentElement.style.display = '';
+  document.getElementById('c-badge').parentElement.style.display = '';
+  document.getElementById('c-sz').parentElement.style.display = '';
+  document.getElementById('lcard').classList.remove('amenity');
+
+
+  document.getElementById('c-id').textContent = isNamed ? shape.lot_id : t('unassigned');
+
+  const ct = document.getElementById('c-type');
+  if(isNamed && data) {
+    ct.textContent = TNAMES[data.type];
+    ct.style.cssText = `background:${hexA(c,0.12)};color:${c};border:1px solid ${hexA(c,0.4)}`;
+    const p = prices[data.type];
+    const tot = p ? Math.round(p*data.size) : null;
+    const isSold = data.status === 'sold';
+    document.getElementById('c-cat').textContent = TNAMES[data.type];
+    document.getElementById('c-sz').textContent = Number(data.size).toLocaleString()+' m\u00b2';
+    document.getElementById('c-pm').textContent = isSold ? '-' : (p ? fmtPrice(p, true) : t('consult'));
+    document.getElementById('c-tot').textContent = isSold ? '-' : (tot ? fmtPrice(tot, false) : '-');
+    const b = document.getElementById('c-badge');
+    b.textContent = SMAP[data.status];
+    const sc = {
+      available:'rgba(45,106,79,0.25);color:#4CAF7A;border:1px solid rgba(45,106,79,0.4)',
+      sold:'rgba(139,26,26,0.25);color:#E57373;border:1px solid rgba(139,26,26,0.4)'
+    };
+    b.style.cssText = 'background:'+sc[data.status];
+    document.getElementById('mob-acts').style.display = data.status==='sold' ? 'none' : '';
+  } else {
+    ct.textContent = TIER_LABEL[shape.tier];
+    ct.style.cssText = `background:${hexA(c,0.12)};color:${c};border:1px solid ${hexA(c,0.35)}`;
+    document.getElementById('c-cat').textContent = 'Assign ID in Inkscape';
+    document.getElementById('c-sz').textContent = '-';
+    document.getElementById('c-pm').textContent = '-';
+    document.getElementById('c-tot').textContent = '-';
+    document.getElementById('c-badge').textContent = '';
+    document.getElementById('c-badge').style.cssText = '';
+  }
+
+  const _lcinq=document.getElementById('c-acts');
+if(_lcinq && data) _lcinq.style.display=data.status==='sold'?'none':'';
+  document.getElementById('lcard').classList.add('on');
+  document.getElementById('ph').style.display = 'none';
+  mobSelectShape(shape);
+  render();
+}
+
+function filt(t) {
+  activeFilt = t;
+  document.querySelectorAll('.legr').forEach(r=>r.classList.remove('af'));
+  if(t) document.getElementById('lr-'+t)?.classList.add('af');
+  render();
+}
+
+const wrap = document.getElementById('mapwrap');
+const cont = document.getElementById('mapContainer');
+let scale=1,tx=0,ty=0,tx_val=0,ty_val=0,pan={on:false};
+function applyT(){
+  tx_val=tx; ty_val=ty;
+  document.getElementById('mapContainer').style.transform=`translate(${tx}px,${ty}px) scale(${scale})`;
+}
+function zm(f){
+  const r=wrap.getBoundingClientRect();
+  const ns=Math.min(8,Math.max(0.2,scale*f));
+  tx=r.width/2-(r.width/2-tx)*(ns/scale);
+  ty=r.height/2-(r.height/2-ty)*(ns/scale);
+  scale=ns; applyT();
+}
+function zr(){fitMap();}
+wrap.addEventListener('mousedown',e=>{if(e.button!==0)return;pan={on:true,sx:e.clientX,sy:e.clientY,tx,ty};wrap.classList.add('grabbing');});
+window.addEventListener('mousemove',e=>{if(!pan.on)return;tx=pan.tx+(e.clientX-pan.sx);ty=pan.ty+(e.clientY-pan.sy);applyT();});
+window.addEventListener('mouseup',()=>{pan.on=false;wrap.classList.remove('grabbing');});
+wrap.addEventListener('wheel',e=>{
+  e.preventDefault();
+  const r=wrap.getBoundingClientRect();
+  const mx=e.clientX-r.left,my=e.clientY-r.top;
+  const f=e.deltaY>0?0.9:1.11;
+  const ns=Math.min(8,Math.max(0.2,scale*f));
+  tx=mx-(mx-tx)*(ns/scale);ty=my-(my-ty)*(ns/scale);scale=ns;applyT();
+},{passive:false});
+wrap.addEventListener('touchstart',e=>{if(e.touches.length===1){const t=e.touches[0];pan={on:true,sx:t.clientX,sy:t.clientY,tx,ty};}},{passive:true});
+wrap.addEventListener('touchmove',e=>{if(!pan.on||e.touches.length!==1)return;const t=e.touches[0];tx=pan.tx+(t.clientX-pan.sx);ty=pan.ty+(t.clientY-pan.sy);applyT();},{passive:true});
+wrap.addEventListener('touchend',()=>{pan.on=false;});
+
+
+// \u2500\u2500\u2500 Lot inquiry: homepage modal + WhatsApp \u2500\u2500\u2500
+const WA_NUM = '529541399339';
+const CAT_IDX = {GP:1,G:2,S:3,B:4,C:5,H:6};
+let LOT_SEL = {id:'', type:'', code:''};
+let LEAD_LOT = ''; // lot the inquiry pop-up was opened for ('' when opened from nav/footer)
+function lotMsg(id, type){ return "I'm interested in lot " + id + ", " + type; }
+function lotWaMsg(id){ return "Hi, I'm interested in lot " + id + " at Tres Aguas"; }
+function setLotCTA(shape){
+  const data = lotData[shape.id];
+  const id = shape.lot_id || t('unassigned');
+  const code = (data && data.type) || shape.tier;
+  const type = shape.tier === 'BC' ? (TIER_LABEL.BC || 'Beach Club') : (data ? TNAMES[data.type] : (TIER_LABEL[shape.tier] || shape.tier));
+  LOT_SEL = {id:id, type:type, code:code};
+  const href = 'https://wa.me/' + WA_NUM + '?text=' + encodeURIComponent(lotWaMsg(id));
+  ['c-wa','mob-wa'].forEach(function(i){ const a = document.getElementById(i); if(a) a.href = href; });
+}
+function openLotInquiry(){
+  const m = document.getElementById('modal-message');
+  if(m) m.value = LOT_SEL.id ? lotMsg(LOT_SEL.id, LOT_SEL.type) : '';
+  const sel = document.getElementById('modal-category');
+  if(sel) sel.selectedIndex = CAT_IDX[LOT_SEL.code] || 7;
+  const fb = document.getElementById('modal-feedback');
+  if(fb) fb.textContent = '';
+  const b = document.querySelector('.modal-btn'); if(b) b.disabled = false;
+  openModal();
+  LEAD_LOT = LOT_SEL.id || '';
+}
+/* INQUIRY MODAL (from the homepage) */
+function openModal() {
+  LEAD_LOT = '';
+  document.getElementById('modal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modal').classList.remove('active');
+  document.body.style.overflow = '';
+}
+function closeModalOutside(e) {
+  if (e.target === document.getElementById('modal')) closeModal();
+}
+window.openModal = openModal;
+/* WEB3FORMS (same key and endpoint as the homepage) */
+const W3F_KEY = '898aa7a5-ecdb-44a4-8b41-28671e8af4e9';
+const W3F_URL = 'https://api.web3forms.com/submit';
+async function submitModalForm(e) {
+  e.preventDefault();
+  const feedback = document.getElementById('modal-feedback');
+  const btn = document.querySelector('.modal-btn');
+  const name     = document.getElementById('modal-name').value.trim();
+  const email    = document.getElementById('modal-email').value.trim();
+  const phone    = document.getElementById('modal-phone').value.trim();
+  const category = document.getElementById('modal-category').value;
+  const message  = document.getElementById('modal-message').value.trim();
+  if (!name || !email || !phone || !category) {
+    feedback.style.color = '#c0392b';
+    feedback.textContent = 'Please fill in all fields.';
+    return;
+  }
+  feedback.style.color = 'var(--gold)';
+  feedback.textContent = 'Sending\u2026';
+  btn.disabled = true;
+  const body = new FormData();
+  body.append('access_key', W3F_KEY);
+  body.append('subject',    'New Lot Inquiry: Tres Aguas Interactive Masterplan');
+  body.append('name',       name);
+  body.append('email',      email);
+  body.append('phone',      phone);
+  body.append('lot_category', category);
+  body.append('message',    message);
+  body.append('lot',        LOT_SEL.id || '');
+  body.append('page',       location.href);
+  try {
+    const res  = await fetch(W3F_URL, { method: 'POST', body });
+    const data = await res.json();
+    if (data.success) {
+      window.dataLayer = window.dataLayer || [];
+      dataLayer.push({event: 'generate_lead', form_name: 'modal', lot: LEAD_LOT, page_lang: document.documentElement.lang});
+      feedback.textContent = 'Thank you, we\u2019ll be in touch shortly.';
+      document.querySelectorAll('.modal-input').forEach(i => i.value = '');
+      setTimeout(closeModal, 2800);
+    } else {
+      throw new Error(data.message);
+    }
+  } catch {
+    feedback.style.color = '#c0392b';
+    feedback.textContent = 'Something went wrong. Please try again.';
+    btn.disabled = false;
+  }
+}
+document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && document.getElementById('modal').classList.contains('active')) closeModal(); });
+
+// \u2500\u2500\u2500 Mobile \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+const isMobile = () => window.innerWidth <= 768;
+
+// Sheet peek height (how much shows when collapsed)
+document.documentElement.style.setProperty('--sheet-peek', '110px');
+
+let sheetOpen = false;
+function toggleSheet(forceOpen) {
+  const sheet = document.getElementById('mob-sheet');
+  sheetOpen = forceOpen !== undefined ? forceOpen : !sheetOpen;
+  sheet.classList.toggle('open', sheetOpen);
+}
+function openSheet() { toggleSheet(true); }
+
+// Drawer
+let drawerOpen = false;
+function toggleDrawer() {
+  drawerOpen = !drawerOpen;
+  document.getElementById('mob-drawer').classList.toggle('open', drawerOpen);
+  document.getElementById('mob-overlay').classList.toggle('on', drawerOpen);
+}
+function closeDrawer() {
+  drawerOpen = false;
+  document.getElementById('mob-drawer').classList.remove('open');
+  document.getElementById('mob-overlay').classList.remove('on');
+}
+
+// Sheet drag gesture
+(function(){
+  const sheet = document.getElementById('mob-sheet');
+  if(!sheet) return;
+  let startY = 0, startOpen = false;
+  sheet.addEventListener('touchstart', e => {
+    startY = e.touches[0].clientY;
+    startOpen = sheetOpen;
+  }, {passive:true});
+  sheet.addEventListener('touchend', e => {
+    const dy = startY - e.changedTouches[0].clientY;
+    if(dy > 40) openSheet();
+    else if(dy < -40) toggleSheet(false);
+  }, {passive:true});
+})();
+
+// Populate mobile lot card (mirrors selectShape)
+function mobSelectShape(shape) {
+  if(!isMobile()) return;
+  const data = lotData[shape.id];
+  const isNamed = !!(shape.lot_id);
+  const isBC = shape.tier === 'BC' || !!(data && data.amenity);
+  const c = isNamed && data ? TCOLORS[data.type] : tierColor(shape.tier);
+
+  document.getElementById('mob-lot-none').style.display = 'none';
+  if(isBC) {
+    const sz = data ? data.size : (shape.size || null);
+    const card = document.getElementById('mob-lcard');
+    card.classList.add('on');
+    document.getElementById('mob-c-id').textContent = isNamed ? shape.lot_id : t('unassigned');
+    const ct = document.getElementById('mob-c-type');
+    if(ct){
+      ct.textContent = TIER_LABEL[shape.tier] || 'Beach Club';
+      ct.style.cssText = `background:${hexA(c,0.12)};color:${c};border:1px solid ${hexA(c,0.35)}`;
+    }
+    ['mob-c-cat','mob-c-pm','mob-c-tot','mob-c-badge'].forEach(id=>{
+      const el=document.getElementById(id);
+      if(el && el.parentElement) el.parentElement.style.display='none';
+    });
+    const szEl=document.getElementById('mob-c-sz');
+    if(szEl && szEl.parentElement) szEl.parentElement.style.display='none';
+    document.getElementById('mob-lcard').classList.add('amenity');
+    const mobInq=document.getElementById('mob-acts');
+    if(mobInq) mobInq.style.display='';
+    openSheet();
+    return;
+  }
+  ['mob-c-cat','mob-c-pm','mob-c-tot','mob-c-badge','mob-c-sz'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el && el.parentElement) el.parentElement.style.display='';
+  });
+  const card = document.getElementById('mob-lcard');
+  card.classList.add('on');
+  card.classList.remove('amenity');
+
+  document.getElementById('mob-c-id').textContent = isNamed ? shape.lot_id : t('unassigned');
+
+  const ct = document.getElementById('mob-c-type');
+  if(isNamed && data) {
+    ct.textContent = TNAMES[data.type];
+    ct.style.cssText = `background:${hexA(c,0.12)};color:${c};border:1px solid ${hexA(c,0.4)}`;
+    const isSold = data.status === 'sold';
+    const p = prices[data.type];
+    const tot = p ? Math.round(p * data.size) : null;
+    document.getElementById('mob-c-cat').textContent = TNAMES[data.type];
+    document.getElementById('mob-c-sz').textContent = data.size ? Number(data.size).toLocaleString()+' m\u00b2' : '-';
+    document.getElementById('mob-c-pm').textContent = isSold ? '-' : (p ? fmtPrice(p, true) : t('consult'));
+    document.getElementById('mob-c-tot').textContent = isSold ? '-' : (tot ? fmtPrice(tot, false) : '-');
+    const b = document.getElementById('mob-c-badge');
+    b.textContent = SMAP[data.status];
+    const sc = {
+      available:'rgba(45,106,79,0.25);color:#4CAF7A;border:1px solid rgba(45,106,79,0.4)',
+      sold:'rgba(139,26,26,0.25);color:#E57373;border:1px solid rgba(139,26,26,0.4)'
+    };
+    b.style.cssText = 'background:'+sc[data.status];
+    document.getElementById('mob-acts').style.display = data.status==='sold' ? 'none' : '';
+  } else {
+    ct.textContent = TIER_LABEL[shape.tier] || shape.tier;
+    ct.style.cssText = `background:${hexA(c,0.12)};color:${c};border:1px solid ${hexA(c,0.35)}`;
+    document.getElementById('mob-c-cat').textContent = '-';
+    document.getElementById('mob-c-sz').textContent = '-';
+    document.getElementById('mob-c-pm').textContent = '-';
+    document.getElementById('mob-c-tot').textContent = '-';
+    document.getElementById('mob-c-badge').textContent = '';
+  }
+
+  // Update peek label
+  document.getElementById('mob-peek').textContent = isNamed ? shape.lot_id : t('unassigned');
+  // Open sheet
+  openSheet();
+}
+
+// Sync mobile stats
+function updateMobStats() {
+  if(!isMobile()) return;
+  document.getElementById('mh-av').textContent = document.getElementById('h-av').textContent;
+  document.getElementById('mh-so').textContent = document.getElementById('h-so').textContent;
+  document.getElementById('mh-tt').textContent = document.getElementById('h-tt').textContent;
+}
+
+// Sync mobile lang toggles
+function syncMobLang(lang) {
+  ['es','en'].forEach(l => {
+    document.getElementById('mob-lo-'+l)?.classList.toggle('on', l===lang);
+  });
+  // Update mob labels
+  const L = I18N[lang];
+  document.getElementById('mlbl-av').textContent = L.statAv;
+  document.getElementById('mlbl-so').textContent = L.statSo;
+  document.getElementById('mlbl-tt').textContent = L.statTot;
+  const peek = document.getElementById('mob-peek');
+  if(peek && !selId) peek.textContent = L.noDetail;
+  const none = document.getElementById('mob-lot-none');
+  if(none) none.textContent = L.noDetail;
+  const lcinq = document.getElementById('mob-lcinq');
+  if(lcinq) lcinq.textContent = L.inquiry;
+  const lblLots = document.getElementById('mob-lbl-lots');
+  if(lblLots) lblLots.textContent = L.lotType;
+}
+
+// Sync mobile currency toggles + prices
+function syncMobCur(cur) {
+  ['MXN','USD','CAD'].forEach(c => {
+    const b=document.getElementById('mob-co-'+c); if(b){ b.classList.toggle('active', c===cur); b.classList.toggle('on', c===cur); b.setAttribute('aria-pressed', c===cur ? 'true' : 'false'); }
+  });
+  ['GP','G','S','B','C','H','BC'].forEach(tier => {
+    const el = document.getElementById('mob-lp-'+tier);
+    if(!el) return;
+    const p = prices[tier];
+    el.textContent = p ? fmtPrice(p, true) : t('consult');
+  });
+}
+
+// Fit map to screen on mobile
+function fitMap() {
+  const wrap = document.getElementById('mapwrap');
+  const W = wrap.clientWidth;
+  const H = wrap.clientHeight;
+  if(!W || !H) return;
+  // Fit the full 2592x1728 plan into view with a small margin
+  const margin = isMobile() ? 1.0 : 1.42;
+  const s = Math.min(W / 2592, H / 1728) * margin;
+  // Horizontal bias: positive shifts the view right
+  const xBias = isMobile() ? 0 : 0.09;
+  const ntx = (W - 2592 * s) / 2 + (W * xBias);
+  const nty = (H - 1728 * s) / 2;
+  scale = s; tx = ntx; ty = nty; tx_val = ntx; ty_val = nty;
+  document.getElementById('mapContainer').style.transform = `translate(${ntx}px,${nty}px) scale(${s})`;
+}
+// Back-compat alias
+function fitMapMobile() { fitMap(); }
+
+// Pinch-to-zoom on mobile
+(function(){
+  const wrap = document.getElementById('mapwrap');
+  const cont = document.getElementById('mapContainer');
+  let lastDist = 0;
+  wrap.addEventListener('touchstart', e => {
+    if(e.touches.length === 2) {
+      lastDist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+    }
+  }, {passive:true});
+  wrap.addEventListener('touchmove', e => {
+    if(e.touches.length === 2) {
+      e.preventDefault();
+      const dist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      const f = dist / lastDist;
+      const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+      const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+      const r = wrap.getBoundingClientRect();
+      const mx = midX - r.left, my = midY - r.top;
+      const ns = Math.min(8, Math.max(0.1, scale * f));
+      tx_val = mx - (mx - tx_val) * (ns / scale);
+      ty_val = my - (my - ty_val) * (ns / scale);
+      scale = ns;
+      cont.style.transform = `translate(${tx_val}px,${ty_val}px) scale(${scale})`;
+      lastDist = dist;
+    }
+  }, {passive:false});
+})();
+
+// \u2500\u2500\u2500 End Mobile \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+
+
+function init(){
+  fetchFX();
+  applyI18n();
+  render();updateStats();
+  // Mobile setup
+  // Fit map to viewport on all devices
+  fitMap();
+  if(isMobile()){
+    syncMobLang(curLang);
+    syncMobCur(curCur);
+  }
+  window.addEventListener('resize', () => fitMap());
+}
+// init() is called from internal.js after lots load
+</script>
+<script>window.TA_INTERNAL = { dataUrl: "./lots.json", shapesUrl: "./shapes.json", credentials: "same-origin" };</script>
+<script src="internal.js"></script>
+</body>
+</html>

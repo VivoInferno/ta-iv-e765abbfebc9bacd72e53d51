@@ -1,0 +1,71 @@
+/* Internal plan extras: iOS home-screen, status colours, detail fields, language toggle. */
+html{background:#0A0A0A}
+body{padding-top:env(safe-area-inset-top);padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
+header{padding-top:0;padding-left:max(28px, env(safe-area-inset-left));padding-right:max(28px, env(safe-area-inset-right))}
+.layout,.mapwrap,.sb,.mob-sheet,.mob-drawer{touch-action:manipulation}
+button,.cur-btn,.zbtn,.mob-menu-btn,.legr,.mob-legr{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+#overlay, #mapContainer, .mapwrap{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+input,select,textarea{font-size:16px}
+
+/* Language gold pill, same language-toggle treatment as the currency switch. */
+.lang-toggle{margin:0}
+header .header-right .lang-toggle{margin:0}
+@media (max-width:768px){
+  header{padding-left:max(14px, env(safe-area-inset-left));padding-right:max(52px, env(safe-area-inset-right))}
+  header .header-right{display:flex;position:absolute;right:56px;top:50%;transform:translateY(-50%)}
+  header .hstats{display:none}
+}
+
+/* Status chips and extra detail rows */
+.strow{display:flex;flex-wrap:wrap;gap:10px 14px;padding:4px 0 2px}
+.internal-rows{margin-top:6px}
+.internal-rows .lcrow{align-items:flex-start}
+.internal-notes{white-space:pre-wrap;font-size:0.78rem;line-height:1.45;max-height:8.5rem;overflow:auto;color:rgba(255,255,255,0.88)}
+.share-block{margin:8px 0 0;padding:8px 0 0;border-top:1px solid rgba(255,255,255,0.08)}
+.share-label{font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
+.lcbadge.is-available{background:rgba(45,106,79,0.25);color:#4CAF7A;border:1px solid rgba(45,106,79,0.4)}
+.lcbadge.is-pending{background:rgba(212,160,23,0.28);color:#F0C14B;border:1px solid rgba(212,160,23,0.5)}
+.lcbadge.is-making_payment{background:rgba(61,122,140,0.32);color:#8ED3E0;border:1px solid rgba(61,122,140,0.55)}
+.lcbadge.is-sold{background:rgba(139,26,26,0.25);color:#E57373;border:1px solid rgba(139,26,26,0.4)}
+.lcbadge.is-split{background:rgba(107,76,154,0.32);color:#C9B6E8;border:1px solid rgba(107,76,154,0.55)}
+.lcbadge.is-firm30{background:rgba(224,122,61,0.28);color:#F4B183;border:1px solid rgba(224,122,61,0.5)}
+.lcbadge.is-firm100{background:rgba(42,157,143,0.28);color:#7FDECB;border:1px solid rgba(42,157,143,0.5)}
+
+/* Hide public inquiry / WhatsApp CTAs on the internal app */
+#c-acts,#mob-acts,.wa-float,#modal,#wa-float{display:none !important}
+
+/* Tooltip: allow more rows, keep typography consistent */
+.tt{max-width:280px}
+.tt .tt-r.internal{display:flex}
+.tt.is-touch{display:none !important}
+
+/* Stats: five compact figures on desktop */
+header .hstats{gap:14px;left:max(16px, env(safe-area-inset-left))}
+.hstats .hs-l{font-size:0.48rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.55)}
+@media (max-width:1100px){
+  header .hstats{display:none}
+}
+
+/* Mobile sheet needs more room for payment fields */
+.mob-sheet.open{max-height:min(78vh, 640px)}
+.mob-stats{display:flex !important;justify-content:space-between;gap:8px;padding:4px 0 10px}
+.mob-stat-l{font-size:0.5rem;letter-spacing:0.1em;text-transform:uppercase}
+
+/* Loading / error gate (no lot data in the fallback markup) */
+#ta-boot{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#0A0A0A;color:#E8D4A8;font-family:var(--sans);letter-spacing:0.14em;text-transform:uppercase;font-size:0.72rem;z-index:40}
+#ta-boot[hidden]{display:none !important}
+
+/* Keep internal detail fields reachable */
+.sb{overflow-y:auto;-webkit-overflow-scrolling:touch}
+.lcard.on{max-height:none}
+.lcid{overflow-wrap:anywhere;hyphens:manual}
+.mob-sheet-body{overflow-y:auto;-webkit-overflow-scrolling:touch;max-height:calc(78vh - 90px);padding-bottom:env(safe-area-inset-bottom)}
+header .hstats{gap:10px;max-width:calc(100% - 220px);flex-wrap:wrap}
+.hstats .hs-n{font-size:0.95rem}
+.hstats .hs-l{font-size:0.42rem}
+.sb .lcrow{flex-wrap:wrap;align-items:flex-start;gap:4px 8px}
+.sb .lck{flex:0 0 auto;max-width:46%}
+.sb .lcv{flex:1 1 7rem;text-align:right}
+.sb .internal-notes{flex-basis:100%;text-align:left;max-height:7rem}
+.sb .lcid{white-space:nowrap;font-size:1.05rem}
+.sb .lch{gap:8px}
