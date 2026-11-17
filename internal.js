@@ -22,46 +22,18 @@
 
   const INTERNAL_I18N = {
     en: {
-      pending: 'Pending',
-      making_payment: 'Making Payment',
-      split: 'Split ownership',
       firm30: 'FIRM30',
       firm100: 'Firm 100',
-      buyer: 'Buyer',
-      salePrice: 'Sale price',
-      paid: 'Amount paid',
-      balance: 'Balance',
-      saleDate: 'Sale date',
-      notes: 'Notes',
-      share: 'Share',
       listPrice: 'List price',
-      statPe: 'Pending',
-      statMp: 'Paying',
       title: 'Tres Aguas Internal Plan',
-      noDetail: 'Tap a lot to see details',
       rotate: 'Rotate your phone',
-      viewBuyer: 'View Buyer Info'
     },
     es: {
-      pending: 'Pendiente',
-      making_payment: 'En pago',
-      split: 'Propiedad compartida',
       firm30: 'FIRM30',
       firm100: 'Firm 100',
-      buyer: 'Comprador',
-      salePrice: 'Precio de venta',
-      paid: 'Monto pagado',
-      balance: 'Saldo',
-      saleDate: 'Fecha de venta',
-      notes: 'Notas',
-      share: 'Participacion',
       listPrice: 'Precio de lista',
-      statPe: 'Pendiente',
-      statMp: 'En pago',
       title: 'Plan interno Tres Aguas',
-      noDetail: 'Toca un lote para ver detalles',
       rotate: 'Gira el telefono',
-      viewBuyer: 'Ver info del comprador'
     }
   };
 
@@ -81,14 +53,6 @@
     if (!mxn) return '-';
     if (perM2 && curCur === 'MXN') return '$' + Math.round(mxn).toLocaleString() + ' ' + curCur + '/m\u00b2';
     return fmtPrice(mxn, !!perM2);
-  }
-
-  function buyerLine(entry) {
-    if (!entry) return '';
-    if (Array.isArray(entry.buyers) && entry.buyers.length) {
-      return entry.buyers.map(function (b) { return b.display || [b.first, b.last].filter(Boolean).join(' '); }).filter(Boolean).join(', ');
-    }
-    return '';
   }
 
   function statusLabel(code) {
@@ -165,7 +129,7 @@
       var statuses = recs.map(function (r) { return r.status; });
       var unique = statuses.filter(function (s, i) { return statuses.indexOf(s) === i; });
       var status = primary ? primary.status : (shape.status || 'available');
-      if (recs.length > 1 && unique.length > 1) status = 'split';
+      if (status !== 'available') status = 'sold';
       var typeCode = (primary && primary.tier) || (typeof TIER_TYPE !== 'undefined' && TIER_TYPE[shape.tier]) || shape.tier || 'B';
       lotData[shape.id] = {
         type: typeCode,
@@ -183,84 +147,6 @@
   }
 
 
-  var UNKNOWN_MONEY = '\u2014';
-
-  function moneyIsSet(v) {
-    return v != null && v !== '' && isFinite(Number(v));
-  }
-  function moneyNonzero(v) {
-    return moneyIsSet(v) && Number(v) !== 0;
-  }
-  function convertAmount(amount, fromCur, toCur) {
-    if (!moneyIsSet(amount)) return null;
-    amount = Number(amount);
-    if (!fromCur || !toCur || fromCur === toCur) return amount;
-    var usd = (typeof fxRates !== 'undefined' && Number(fxRates.USD) > 0) ? Number(fxRates.USD) : 0.0539;
-    var cad = (typeof fxRates !== 'undefined' && Number(fxRates.CAD) > 0) ? Number(fxRates.CAD) : 0.0768;
-    var mxn;
-    if (fromCur === 'MXN') mxn = amount;
-    else if (fromCur === 'USD') mxn = amount / usd;
-    else if (fromCur === 'CAD') mxn = amount / cad;
-    else return null;
-    if (toCur === 'MXN') return mxn;
-    if (toCur === 'USD') return mxn * usd;
-    if (toCur === 'CAD') return mxn * cad;
-    return null;
-  }
-  function recMoneyField(rec, kind, cur) {
-    var map = {
-      sold: { MXN: 'sold_price_mxn', USD: 'sold_price_usd', CAD: 'sold_price_cad' },
-      paid: { MXN: 'paid_mxn', USD: 'paid_usd', CAD: 'paid_cad' },
-      balance: { MXN: 'balance_mxn', USD: 'balance_usd', CAD: 'balance_cad' }
-    };
-    return rec ? rec[map[kind][cur]] : null;
-  }
-  function recNativeCur(rec) {
-    if (!rec) return null;
-    if (rec.sale_currency) return rec.sale_currency;
-    if (moneyNonzero(rec.sold_price_mxn)) return 'MXN';
-    if (moneyNonzero(rec.sold_price_usd)) return 'USD';
-    if (moneyNonzero(rec.sold_price_cad)) return 'CAD';
-    return null;
-  }
-  function recAmount(rec, kind) {
-    if (!rec) return null;
-    var cur = recNativeCur(rec);
-    var order = cur ? [cur, 'MXN', 'USD', 'CAD'] : ['MXN', 'USD', 'CAD'];
-    var seen = {};
-    for (var i = 0; i < order.length; i++) {
-      var c = order[i];
-      if (seen[c]) continue;
-      seen[c] = 1;
-      var v = recMoneyField(rec, kind, c);
-      if (kind === 'sold') {
-        if (moneyNonzero(v)) return { amount: Number(v), currency: c };
-      } else if (moneyIsSet(v) && (moneyNonzero(v) || c === cur)) {
-        return { amount: Number(v), currency: c };
-      }
-    }
-    return null;
-  }
-  function formatExactMoney(amount, currency) {
-    if (!moneyIsSet(amount)) return UNKNOWN_MONEY;
-    var n = Math.round(Number(amount));
-    return '$' + Number(n).toLocaleString() + ' ' + (currency || curCur);
-  }
-  function formatRecMoney(rec, kind, perM2) {
-    var a = recAmount(rec, kind);
-    if (!a) return UNKNOWN_MONEY;
-    var amt = a.amount;
-    if (perM2) {
-      if (!perM2) return UNKNOWN_MONEY;
-      amt = amt / perM2;
-    }
-    var conv = convertAmount(amt, a.currency, curCur);
-    if (conv == null) return UNKNOWN_MONEY;
-    var text = formatExactMoney(conv, curCur);
-    if (perM2) text += '/m\u00b2';
-    return text;
-  }
-
   function fillMoney(el, mxn, alt) {
     if (!el) return;
     if (curCur === 'USD' && alt && alt.usd) { el.textContent = money(null, alt.usd, false); return; }
@@ -268,102 +154,9 @@
     el.textContent = (mxn || mxn === 0) ? money(mxn, null, false) : '-';
   }
 
-  function writeShare(container, rec) {
-    const wrap = document.createElement('div');
-    wrap.className = 'share-block';
-    const lab = document.createElement('div');
-    lab.className = 'share-label';
-    lab.textContent = (rec.share_label || rec.old_lot || ti('share')) + ' - ' + statusLabel(rec.status);
-    wrap.appendChild(lab);
-    const rows = [
-      [ti('buyer'), buyerLine(rec) || '-'],
-      [ti('salePrice'), null],
-      [ti('paid'), null],
-      [ti('balance'), null]
-    ];
-    rows.forEach(function (pair) {
-      const row = document.createElement('div');
-      row.className = 'lcrow';
-      const k = document.createElement('span'); k.className = 'lck'; k.textContent = pair[0];
-      const v = document.createElement('span'); v.className = 'lcv';
-      if (pair[0] === ti('salePrice')) {
-        v.textContent = formatRecMoney(rec, 'sold');
-      } else if (pair[0] === ti('paid')) {
-        v.textContent = formatRecMoney(rec, 'paid');
-        const p = pctLabel(rec.pct_paid);
-        if (p && v.textContent !== UNKNOWN_MONEY) v.textContent += ' (' + p + ')';
-      } else if (pair[0] === ti('balance')) {
-        v.textContent = formatRecMoney(rec, 'balance');
-      } else {
-        v.textContent = pair[1];
-      }
-      row.appendChild(k); row.appendChild(v); wrap.appendChild(row);
-    });
-    if (rec.purchase_date) {
-      const row = document.createElement('div');
-      row.className = 'lcrow';
-      const k = document.createElement('span'); k.className = 'lck'; k.textContent = ti('saleDate');
-      const v = document.createElement('span'); v.className = 'lcv'; v.textContent = rec.purchase_date;
-      row.appendChild(k); row.appendChild(v); wrap.appendChild(row);
-    }
-    if (rec.notes) {
-      const row = document.createElement('div');
-      row.className = 'lcrow';
-      const k = document.createElement('span'); k.className = 'lck'; k.textContent = ti('notes');
-      const v = document.createElement('span'); v.className = 'lcv internal-notes'; v.textContent = rec.notes;
-      row.appendChild(k); row.appendChild(v); wrap.appendChild(row);
-    }
-    container.appendChild(wrap);
-  }
-
   function fillInternal(prefix, data) {
     const box = document.getElementById(prefix + 'internal');
-    if (!box) return;
-    box.innerHTML = '';
-    if (!data) return;
-    const recs = data.records && data.records.length ? data.records : (data.primary ? [data.primary] : []);
-    if (!recs.length) return;
-    if (recs.length > 1) {
-      recs.forEach(function (rec) { writeShare(box, rec); });
-      return;
-    }
-    const rec = recs[0];
-    const showSale = rec.status && rec.status !== 'available';
-    const rows = [];
-    rows.push([ti('buyer'), buyerLine(rec) || (showSale ? '-' : '')]);
-    if (showSale) {
-      rows.push(['sale', rec]);
-      rows.push(['paid', rec]);
-      rows.push(['balance', rec]);
-      rows.push([ti('saleDate'), rec.purchase_date || '-']);
-      if (rec.notes) rows.push([ti('notes'), rec.notes, 'notes']);
-    } else if (rec.notes) {
-      rows.push([ti('notes'), rec.notes, 'notes']);
-    }
-    rows.forEach(function (pair) {
-      if (pair[1] === '' && pair[0] === ti('buyer')) return;
-      const row = document.createElement('div');
-      row.className = 'lcrow';
-      const k = document.createElement('span'); k.className = 'lck';
-      const v = document.createElement('span'); v.className = 'lcv';
-      if (pair[0] === 'sale') {
-        k.textContent = ti('salePrice');
-        v.textContent = formatRecMoney(rec, 'sold');
-      } else if (pair[0] === 'paid') {
-        k.textContent = ti('paid');
-        v.textContent = formatRecMoney(rec, 'paid');
-        const p = pctLabel(rec.pct_paid);
-        if (p && v.textContent !== UNKNOWN_MONEY) v.textContent += ' (' + p + ')';
-      } else if (pair[0] === 'balance') {
-        k.textContent = ti('balance');
-        v.textContent = formatRecMoney(rec, 'balance');
-      } else {
-        k.textContent = pair[0];
-        v.textContent = pair[1] || '-';
-        if (pair[2] === 'notes') v.classList.add('internal-notes');
-      }
-      row.appendChild(k); row.appendChild(v); box.appendChild(row);
-    });
+    if (box) box.innerHTML = '';
   }
 
   function styleBadge(el, status) {
@@ -376,11 +169,10 @@
   function priceFor(data) {
     if (!data) return { pm: null, tot: null, hide: true };
     const rec = data.primary;
-    const isClosed = data.status && data.status !== 'available' && data.status !== 'pending';
-    const showList = data.status === 'available' || data.status === 'pending';
-    const soldAmt = recAmount(rec, 'sold');
-    const pm = showList ? (data.perm2 || (prices && prices[data.type]) || 0) : (soldAmt && data.size ? soldAmt.amount / data.size : 0);
-    const tot = showList ? (data.list_price || (pm && data.size ? pm * data.size : 0)) : (soldAmt ? soldAmt.amount : 0);
+    const isClosed = data.status && data.status !== 'available';
+    const showList = data.status === 'available';
+    const pm = showList ? (data.perm2 || (prices && prices[data.type]) || 0) : 0;
+    const tot = showList ? (data.list_price || (pm && data.size ? pm * data.size : 0)) : 0;
     return { pm: pm, tot: tot, hide: !showList && !tot, showList: showList, isClosed: isClosed };
   }
 
@@ -496,11 +288,9 @@
     const st = function (s) { return lotData[s.id] && lotData[s.id].status; };
     function set(id, n) { const el = document.getElementById(id); if (el) el.textContent = n; }
     const av = counted.filter(function (s) { return st(s) === 'available'; }).length;
-    const pe = counted.filter(function (s) { return st(s) === 'pending'; }).length;
-    const mp = counted.filter(function (s) { return st(s) === 'making_payment' || st(s) === 'firm30' || st(s) === 'firm100'; }).length;
-    const so = counted.filter(function (s) { return st(s) === 'sold' || st(s) === 'split'; }).length;
-    set('h-av', av); set('h-pe', pe); set('h-mp', mp); set('h-so', so); set('h-tt', counted.length);
-    set('mh-av', av); set('mh-pe', pe); set('mh-mp', mp); set('mh-so', so); set('mh-tt', counted.length);
+    const so = counted.filter(function (s) { return st(s) && st(s) !== 'available'; }).length;
+    set('h-av', av); set('h-so', so); set('h-tt', counted.length);
+    set('mh-av', av); set('mh-so', so); set('mh-tt', counted.length);
   };
 
   const origShowTT = window.showTT;
@@ -525,54 +315,21 @@
       document.getElementById('t-p2').textContent = pr.pm ? fmtPrice(pr.pm, true) : '-';
       document.getElementById('t-tot').textContent = pr.tot ? fmtPrice(pr.tot, false) : '-';
     } else {
-      document.getElementById('t-p2').textContent = rec && data && data.size ? formatRecMoney(rec, 'sold', data.size) : UNKNOWN_MONEY;
-      document.getElementById('t-tot').textContent = formatRecMoney(rec, 'sold');
+      document.getElementById('t-p2').textContent = '-';
+      document.getElementById('t-tot').textContent = '-';
     }
-    const buyerEl = document.getElementById('t-buyer');
-    const buyRow = document.getElementById('tt-buyer-row');
-    if (buyerEl && buyRow) {
-      const names = data && data.records && data.records.length > 1
-        ? data.records.map(buyerLine).filter(Boolean).join(' / ')
-        : buyerLine(rec);
-      buyerEl.textContent = names || '-';
-      buyRow.style.display = names ? '' : 'none';
-    }
+    const buyRow = document.getElementById('tt-private-row');
+    if (buyRow) buyRow.style.display = 'none';
     moveTT(e);
     TTel.classList.add('on');
   };
 
 
-  let lastPrivacyLot = null;
-  let buyerUnlocked = false;
-
-  function isPrivateStatus(status) {
-    return !!(status && status !== 'available');
-  }
-
-  function applyBuyerPrivacy(data) {
-    const lotKey = (typeof selId !== 'undefined') ? selId : null;
-    if (lotKey !== lastPrivacyLot) {
-      buyerUnlocked = false;
-      lastPrivacyLot = lotKey;
-    }
-    const privateLot = isPrivateStatus(data && data.status);
-    const box = document.getElementById('c-internal');
-    const btn = document.getElementById('btn-view-buyer');
-    const blur = privateLot && !buyerUnlocked;
-    if (box) {
-      box.classList.toggle('is-blurred', blur);
-      box.setAttribute('aria-hidden', blur ? 'true' : 'false');
-    }
-    if (btn) {
-      btn.hidden = !(privateLot && !buyerUnlocked);
-      btn.setAttribute('aria-expanded', (!blur && privateLot) ? 'true' : 'false');
-      btn.textContent = ti('viewBuyer');
-    }
-    // Sold-style list/sale prices in the top card are private; hide them so they are not shown unblurred.
-    const hideTopPrice = privateLot && data.status !== 'pending';
-    ['c-pm', 'c-tot'].forEach(function (id) {
+  function hideSoldPrices(data) {
+    const privateLot = !!(data && data.status && data.status !== 'available');
+    ['c-pm', 'c-tot', 'mob-c-pm', 'mob-c-tot'].forEach(function (id) {
       const el = document.getElementById(id);
-      if (el && el.parentElement) el.parentElement.style.display = hideTopPrice ? 'none' : '';
+      if (el && el.parentElement) el.parentElement.style.display = privateLot ? 'none' : '';
     });
   }
 
@@ -606,21 +363,6 @@
     finally { restoreMapTransform(snap); }
   }
 
-  function revealBuyerInfo() {
-    withMapFrozen(function () {
-      buyerUnlocked = true;
-      const box = document.getElementById('c-internal');
-      const btn = document.getElementById('btn-view-buyer');
-      if (box) {
-        box.classList.remove('is-blurred');
-        box.setAttribute('aria-hidden', 'false');
-      }
-      if (btn) {
-        btn.hidden = true;
-        btn.setAttribute('aria-expanded', 'true');
-      }
-    });
-  }
 
   function fitLotPanel() {
     const sb = document.querySelector('.sb');
@@ -641,7 +383,6 @@
     const longest = function () {
       let m = 0;
       rowsOf().forEach(function (row) {
-        if (row.querySelector('.internal-notes')) return;
         m = Math.max(m, row.scrollWidth);
       });
       return m;
@@ -659,16 +400,7 @@
     root.style.setProperty('--sb-width', finalW + 'px');
   }
 
-  function hideBuyerInfo() {
-    withMapFrozen(function () {
-      buyerUnlocked = false;
-      const data = (typeof lotData !== 'undefined' && typeof selId !== 'undefined') ? lotData[selId] : null;
-      applyBuyerPrivacy(data);
-    });
-  }
-  window.revealBuyerInfo = revealBuyerInfo;
-  window.hideBuyerInfo = hideBuyerInfo;
-  window.applyBuyerPrivacy = applyBuyerPrivacy;
+  window.hideSoldPrices = hideSoldPrices;
   window.fitLotPanel = fitLotPanel;
 
   window.selectShape = function selectShape(shape) {
@@ -702,15 +434,17 @@
         if (pmLbl) pmLbl.textContent = t('pricepm');
         if (totLbl) totLbl.textContent = t('total');
       } else {
-        document.getElementById('c-pm').textContent = rec && data.size ? formatRecMoney(rec, 'sold', data.size) : UNKNOWN_MONEY;
-        document.getElementById('c-tot').textContent = formatRecMoney(rec, 'sold');
-        const totLbl = document.getElementById('c-tot').previousElementSibling;
-        if (totLbl) totLbl.textContent = ti('salePrice');
+        document.getElementById('c-pm').textContent = '';
+        document.getElementById('c-tot').textContent = '';
+        const pmEl = document.getElementById('c-pm');
+        const totEl = document.getElementById('c-tot');
+        if (pmEl && pmEl.parentElement) pmEl.parentElement.style.display = 'none';
+        if (totEl && totEl.parentElement) totEl.parentElement.style.display = 'none';
       }
       styleBadge(document.getElementById('c-badge'), data.status);
     }
     fillInternal('c-', data);
-    applyBuyerPrivacy(data);
+    hideSoldPrices(data);
     const acts = document.getElementById('c-acts');
     if (acts) acts.style.display = 'none';
     if (typeof mobSelectShape === 'function') mobSelectShape(shape);
@@ -747,8 +481,12 @@
         document.getElementById('mob-c-pm').textContent = pr.pm ? fmtPrice(pr.pm, true) : '-';
         document.getElementById('mob-c-tot').textContent = pr.tot ? fmtPrice(Math.round(pr.tot), false) : '-';
       } else {
-        document.getElementById('mob-c-pm').textContent = rec && data.size ? formatRecMoney(rec, 'sold', data.size) : UNKNOWN_MONEY;
-        document.getElementById('mob-c-tot').textContent = formatRecMoney(rec, 'sold');
+        document.getElementById('mob-c-pm').textContent = '';
+        document.getElementById('mob-c-tot').textContent = '';
+        const pmEl = document.getElementById('mob-c-pm');
+        const totEl = document.getElementById('mob-c-tot');
+        if (pmEl && pmEl.parentElement) pmEl.parentElement.style.display = 'none';
+        if (totEl && totEl.parentElement) totEl.parentElement.style.display = 'none';
       }
       styleBadge(document.getElementById('mob-c-badge'), data.status);
     }
@@ -769,13 +507,11 @@
       const el = document.getElementById(pair[0]);
       if (el) el.textContent = L[pair[1]] || ti(pair[1]);
     });
-    const ttk = document.getElementById('ttk-buyer');
-    if (ttk) ttk.textContent = ti('buyer');
+    const buyRow = document.getElementById('tt-private-row');
+    if (buyRow) buyRow.style.display = 'none';
     document.documentElement.lang = curLang === 'es' ? 'es' : 'en';
     const rotateMsg = document.getElementById('rotate-msg');
     if (rotateMsg) rotateMsg.textContent = ti('rotate');
-    const vbtn = document.getElementById('btn-view-buyer');
-    if (vbtn) vbtn.textContent = ti('viewBuyer');
     const title = document.querySelector('title');
     if (title) title.textContent = ti('title');
     if (selId) {
@@ -825,24 +561,6 @@
 
   document.documentElement.style.setProperty('--sheet-peek', '72px');
   installOrientationLock();
-  function isViewBuyerBtn(el) {
-    return !!(el && el.closest && el.closest('#btn-view-buyer'));
-  }
-  function stopBuyerBtnBubble(e) {
-    if (!isViewBuyerBtn(e.target)) return;
-    if (e.stopPropagation) e.stopPropagation();
-    if (e.stopImmediatePropagation) e.stopImmediatePropagation();
-  }
-  ['pointerdown', 'touchstart', 'mousedown', 'pointerup', 'touchend', 'mouseup'].forEach(function (type) {
-    document.addEventListener(type, stopBuyerBtnBubble, true);
-  });
-  document.addEventListener('click', function (e) {
-    if (!isViewBuyerBtn(e.target)) return;
-    e.preventDefault();
-    if (e.stopPropagation) e.stopPropagation();
-    if (e.stopImmediatePropagation) e.stopImmediatePropagation();
-    revealBuyerInfo();
-  }, true);
   window.addEventListener('resize', function () { fitLotPanel(); });
 
 
@@ -870,7 +588,7 @@
     });
   }
 
-  const BUILD = (window.TA_INTERNAL && window.TA_INTERNAL.build) || 'v7';
+  const BUILD = (window.TA_INTERNAL && window.TA_INTERNAL.build) || 'v8';
   var liveDataOk = false;
 
   function showDataNotice(msg) {

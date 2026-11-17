@@ -465,9 +465,7 @@ html,body{height:auto;overflow-x:hidden;overflow-y:auto}
   <div class="hstats" id="hstats">
     <div class="hs"><div class="hs-n" id="h-av">-</div><div class="hs-l" id="lbl-av">Available</div></div>
     <div class="hdiv"></div>
-    <div class="hs"><div class="hs-n" id="h-pe">-</div><div class="hs-l" id="lbl-pe">Pending</div></div>
     <div class="hdiv"></div>
-    <div class="hs"><div class="hs-n" id="h-mp">-</div><div class="hs-l" id="lbl-mp">Paying</div></div>
     <div class="hdiv"></div>
     <div class="hs"><div class="hs-n" id="h-so">-</div><div class="hs-l" id="lbl-so">Sold</div></div>
     <div class="hdiv"></div>
@@ -490,7 +488,7 @@ html,body{height:auto;overflow-x:hidden;overflow-y:auto}
 </header>
 
 <div id="data-notice" hidden></div>
-<div id="build-tag" aria-hidden="true">v7</div>
+<div id="build-tag" aria-hidden="true">v8</div>
 <div class="layout">
 <div class="mapwrap" id="mapwrap">
   <div id="mapContainer">
@@ -558,10 +556,7 @@ html,body{height:auto;overflow-x:hidden;overflow-y:auto}
   <div class="div"></div>
   <div class="strow">
     <div class="sti"><div class="std" style="background:rgba(180,180,180,0.62);border:1px solid rgba(200,200,200,0.6)"></div><span class="stl" data-i18n="avail">Available</span></div>
-    <div class="sti"><div class="std" style="background:#D4A017;border:1px solid #D4A017"></div><span class="stl" data-i18n="pending">Pending</span></div>
-    <div class="sti"><div class="std" style="background:#3D8A9C;border:1px solid #3D8A9C"></div><span class="stl" data-i18n="making_payment">Making Payment</span></div>
     <div class="sti"><div class="std" style="background:#8B1A1A;border:1px solid #8B1A1A"></div><span class="stl" data-i18n="sold">Sold</span></div>
-    <div class="sti"><div class="std" style="background:#6B4C9A;border:1px solid #6B4C9A"></div><span class="stl" data-i18n="split">Split</span></div>
   </div>
   <div class="div"></div>
   <div class="lcard" id="lcard">
@@ -570,8 +565,6 @@ html,body{height:auto;overflow-x:hidden;overflow-y:auto}
       <div class="lctype" id="c-type"></div>
     </div>
     <div class="lcrow" id="c-status-row" style="border:none"><span class="lck">Status</span><span class="lcbadge" id="c-badge"></span></div>
-    <button type="button" class="btn-view-buyer" id="btn-view-buyer" hidden>View Buyer Info</button>
-    <div class="internal-rows private-info" id="c-internal"></div>
     <div class="lcrow"><span class="lck" data-i18n="cat">Category</span><span class="lcv" id="c-cat">-</span></div>
     <div class="lcrow"><span class="lck" data-i18n="area">Area</span><span class="lcv" id="c-sz">-</span></div>
     <div class="lcrow"><span class="lck" data-i18n="pricepm">Price / m&#178;</span><span class="lcv" id="c-pm">-</span></div>
@@ -594,8 +587,6 @@ html,body{height:auto;overflow-x:hidden;overflow-y:auto}
   <div class="mob-sheet-body">
     <div class="mob-stats" id="mob-stats">
       <div class="mob-stat"><div class="mob-stat-n" id="mh-av">-</div><div class="mob-stat-l" id="mlbl-av">Available</div></div>
-      <div class="mob-stat"><div class="mob-stat-n" id="mh-pe">-</div><div class="mob-stat-l" id="mlbl-pe">Pending</div></div>
-      <div class="mob-stat"><div class="mob-stat-n" id="mh-mp">-</div><div class="mob-stat-l" id="mlbl-mp">Paying</div></div>
       <div class="mob-stat"><div class="mob-stat-n" id="mh-so">-</div><div class="mob-stat-l" id="mlbl-so">Sold</div></div>
       <div class="mob-stat"><div class="mob-stat-n" id="mh-tt">-</div><div class="mob-stat-l" id="mlbl-tt">Total</div></div>
     </div>
@@ -610,7 +601,6 @@ html,body{height:auto;overflow-x:hidden;overflow-y:auto}
       <div class="lcrow"><span class="lck" data-i18n="pricepm">Price / m&#178;</span><span class="lcv" id="mob-c-pm">-</span></div>
       <div class="lcrow" style="border:none"><span class="lck" data-i18n="total">Total Price</span><span class="lcv" id="mob-c-tot">-</span></div>
       <div style="margin-top:8px"><span class="lcbadge" id="mob-c-badge"></span></div>
-      <div class="internal-rows" id="mob-c-internal"></div>
       <div class="lcacts" id="mob-acts">
         <button type="button" class="lcinq" id="mob-lcinq" onclick="openLotInquiry()">Inquire About This Lot &#8594;</button>
         <a class="lcinq lc-sec" id="mob-wa" href="https://wa.me/529541399339" target="_blank" rel="noopener" data-cta="lot-whatsapp" data-magnet="none"><svg class="lc-wa-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#wa-glyph"/></svg><span>Chat on WhatsApp</span></a>
@@ -640,9 +630,6 @@ html,body{height:auto;overflow-x:hidden;overflow-y:auto}
     <div class="mob-legr"><div class="mob-legsw" style="background:#9B7EBD;border:1px solid #9B7EBD"></div><span class="mob-legn">Hotel</span><span class="mob-legp" id="mob-lp-H">Contact Us</span></div>
     <div style="margin-top:12px">
       <div class="mob-drawer-label">Status</div>
-      <div class="mob-legr"><div style="width:12px;height:12px;border-radius:50%;background:rgba(180,180,180,0.62);border:1px solid rgba(200,200,200,0.6);flex-shrink:0"></div><span class="mob-legn" data-i18n="avail">Available</span></div>
-      <div class="mob-legr"><div style="width:12px;height:12px;border-radius:50%;background:#D4A017;border:1px solid #D4A017;flex-shrink:0"></div><span class="mob-legn" data-i18n="pending">Pending</span></div>
-      <div class="mob-legr"><div style="width:12px;height:12px;border-radius:50%;background:#3D8A9C;border:1px solid #3D8A9C;flex-shrink:0"></div><span class="mob-legn" data-i18n="making_payment">Making Payment</span></div>
       <div class="mob-legr"><div style="width:12px;height:12px;border-radius:50%;background:#8B1A1A;border:1px solid #8B1A1A;flex-shrink:0"></div><span class="mob-legn" data-i18n="sold">Sold</span></div>
       <div class="mob-legr"><div style="width:12px;height:12px;border-radius:50%;background:#6B4C9A;border:1px solid #6B4C9A;flex-shrink:0"></div><span class="mob-legn" data-i18n="split">Split</span></div>
     </div>
@@ -828,7 +815,7 @@ const TCOLORS = {GP:'#C8A96E',G:'#D4AF37',S:'#A8A9AD',B:'#CD7F32',C:'#FFFFFF',H:
 // Map SVG tier to our lot type codes
 const TIER_TYPE = {B:'B',S:'S',G:'G',GP:'GP',C:'C',H:'H',BC:'BC',SC:'SC',DS:'DS',LW:'LW'};
 const TIER_LABEL = {B:'Bronze',S:'Silver',G:'Gold',GP:'Gold Plus',C:'Commercial',H:'Hotel',BC:'Beach Club',SC:'Sports Courts',DS:'Development Services',LW:'Laguna West'};
-let SMAP = {available:'Available',sold:'Sold',pending:'Pending',making_payment:'Making Payment',split:'Split ownership'};
+let SMAP = {available:'Available',sold:'Sold'};
 
 let prices = {GP:13000,G:9000,S:5000,B:3000,C:5000,H:null};
 let activeFilt = null;
@@ -941,7 +928,7 @@ function render() {
 }
 
 function updateStats() {
-  // Header counts sale lots only: Available or Sold. Amenity parcels (M-16, M-19, M-44) are visible but not counted. M-18 is not on the map.
+  // Header counts named lots only (Available or Sold). Amenity parcels (M-16, M-19, M-44) are visible but not counted. M-18 is not on the map.
   const counted = SHAPES.filter(s => s.lot_id && !(lotData[s.id] && lotData[s.id].amenity));
   const st = s => lotData[s.id] && lotData[s.id].status;
   document.getElementById('h-av').textContent = counted.filter(s => st(s)==='available').length;
@@ -1440,7 +1427,7 @@ function init(){
 }
 // init() is called from internal.js after lots load
 </script>
-<script>window.TA_INTERNAL = { dataUrl: "./lots.json", shapesUrl: "./shapes.json", liveUrl: 'https://tresaguas.mx/wp-json/ta-internal/v1/app-data?k=16b5e1718dce9c5361f88014a62f567cbc42020a7efcf2d7', build: "v7", credentials: "same-origin" };</script>
+<script>window.TA_INTERNAL = { dataUrl: "./lots.json", shapesUrl: "./shapes.json", liveUrl: 'https://tresaguas.mx/wp-json/ta-internal/v1/app-data?k=16b5e1718dce9c5361f88014a62f567cbc42020a7efcf2d7', build: "v8", credentials: "same-origin" };</script>
 <script src="internal.js"></script>
 
 </body>
